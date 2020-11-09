@@ -29,7 +29,7 @@ public class BookServiceImpl implements BookService {
     public List<Book> findByAuthor(String author) {
         List<Book> findBooks = new ArrayList<>();
         for (Book book : bookList) {
-            if (book.author.equals(author)) {
+            if (book.getAuthor().equals(author)) {
                 findBooks.add(book);
             }
         }
@@ -45,7 +45,7 @@ public class BookServiceImpl implements BookService {
     public void deleteBook(String author, String name) {
         if (!bookList.isEmpty()) {
             bookList.removeIf(searchBook ->
-                    searchBook.author.equals(author) & searchBook.name.equals(name));
+                    searchBook.getAuthor().equals(author) & searchBook.getName().equals(name));
         }
     }
 
@@ -53,7 +53,7 @@ public class BookServiceImpl implements BookService {
     public List<Book> findByAuthorByName(String author, String name) {
         List<Book> findBooks = new ArrayList<>();
         for (Book book : bookList) {
-            if (book.author.equals(author) & book.name.equals(name)) {
+            if (book.getAuthor().equals(author) & book.getName().equals(name)) {
                 findBooks.add(book);
             }
         }

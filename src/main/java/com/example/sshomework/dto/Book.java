@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class Book {
-    public String name;
-    public String author;
-    public String genre;
+    private String name;
+    private String author;
+    private String genre;
 }

@@ -4,7 +4,6 @@ import com.example.sshomework.dto.Person;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -29,7 +28,7 @@ public class PersonServiceImpl implements PersonService {
     public List<Person> findByFIO(String FIO) {
         List<Person> findPersons = new ArrayList<>();
         for (Person person: personList) {
-            if (getFIO(person.firsName, person.middleName, person.lastName).equals(FIO)) {
+            if (getFIO(person.getFirsName(), person.getMiddleName(), person.getLastName()).equals(FIO)) {
                 findPersons.add(person);
             }
         }
@@ -40,7 +39,7 @@ public class PersonServiceImpl implements PersonService {
     public void deletePerson(String FIO) {
         if (!personList.isEmpty()) {
             personList.removeIf(searchPerson ->
-                    getFIO(searchPerson.firsName, searchPerson.middleName, searchPerson.lastName).equals(FIO));
+                    getFIO(searchPerson.getFirsName(), searchPerson.getMiddleName(), searchPerson.getLastName()).equals(FIO));
         }
     }
 
@@ -48,7 +47,7 @@ public class PersonServiceImpl implements PersonService {
     public List<Person> findByFirstName(String firstName) {
         List<Person> findPersons = new ArrayList<>();
         for (Person person : personList) {
-            if (person.firsName.equals(firstName)) {
+            if (person.getFirsName().equals(firstName)) {
                 findPersons.add(person);
             }
         }

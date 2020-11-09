@@ -12,9 +12,9 @@ import lombok.RequiredArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class Person {
-    public String firsName;
-    public String middleName;
-    public String lastName;
-    public Integer age;
+    private String firsName;
+    private String middleName;
+    private String lastName;
+    private Integer age;
 }
 
