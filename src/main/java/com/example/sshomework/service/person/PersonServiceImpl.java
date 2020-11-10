@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * @author Aleksey Romodin
@@ -26,32 +27,21 @@ public class PersonServiceImpl implements PersonService {
 
     @Override
     public List<Person> findByFIO(String FIO) {
-        List<Person> findPersons = new ArrayList<>();
-        for (Person person: personList) {
-            if (getFIO(person.getFirsName(), person.getMiddleName(), person.getLastName()).equals(FIO)) {
-                findPersons.add(person);
-            }
-        }
-        return findPersons;
+        return personList.stream()
+                .filter(person -> (getFIO(person).equals(FIO)))
+                .collect(Collectors.toList());
     }
 
     @Override
     public void deletePerson(String FIO) {
-        if (!personList.isEmpty()) {
-            personList.removeIf(searchPerson ->
-                    getFIO(searchPerson.getFirsName(), searchPerson.getMiddleName(), searchPerson.getLastName()).equals(FIO));
-        }
+            personList.removeIf(person -> getFIO(person).equals(FIO));
     }
 
     @Override
     public List<Person> findByFirstName(String firstName) {
-        List<Person> findPersons = new ArrayList<>();
-        for (Person person : personList) {
-            if (person.getFirsName().equals(firstName)) {
-                findPersons.add(person);
-            }
-        }
-        return findPersons;
+        return personList.stream()
+                .filter(person -> person.getFirsName().equals(firstName))
+                .collect(Collectors.toList());
     }
 
     @Override
@@ -59,7 +49,7 @@ public class PersonServiceImpl implements PersonService {
         personList.add(person);
     }
 
-    private String getFIO(String f, String m, String l) {
-        return f + " " + m + " " + l;
+    private String getFIO(Person person) {
+        return person.getFirsName() + " " + person.getMiddleName() + " " + person.getLastName();
     }
 }

@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * @author Aleksey Romodin
@@ -27,13 +28,9 @@ public class BookServiceImpl implements BookService {
 
     @Override
     public List<Book> findByAuthor(String author) {
-        List<Book> findBooks = new ArrayList<>();
-        for (Book book : bookList) {
-            if (book.getAuthor().equals(author)) {
-                findBooks.add(book);
-            }
-        }
-        return findBooks;
+        return bookList.stream()
+                .filter(book -> book.getAuthor()
+                .equals(author)).collect(Collectors.toList());
     }
 
     @Override
@@ -43,20 +40,14 @@ public class BookServiceImpl implements BookService {
 
     @Override
     public void deleteBook(String author, String name) {
-        if (!bookList.isEmpty()) {
             bookList.removeIf(searchBook ->
                     searchBook.getAuthor().equals(author) & searchBook.getName().equals(name));
-        }
     }
 
     @Override
     public List<Book> findByAuthorByName(String author, String name) {
-        List<Book> findBooks = new ArrayList<>();
-        for (Book book : bookList) {
-            if (book.getAuthor().equals(author) & book.getName().equals(name)) {
-                findBooks.add(book);
-            }
-        }
-        return findBooks;
+        return bookList.stream()
+                .filter(book -> book.getAuthor().equals(author) & book.getName().equals(name))
+                .collect(Collectors.toList());
     }
 }
