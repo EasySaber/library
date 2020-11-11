@@ -1,7 +1,9 @@
 package com.example.sshomework.api;
 
 import com.example.sshomework.dto.LibraryCard;
+import com.example.sshomework.dto.View;
 import com.example.sshomework.service.libraryCard.LibraryCardService;
+import com.fasterxml.jackson.annotation.JsonView;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
@@ -14,6 +16,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
 
 /**
@@ -27,6 +30,7 @@ public class LibraryCardRestController {
 
     private final LibraryCardService libraryCardService;
 
+    @JsonView(View.All.class)
     @Operation(description = "Показать все записи")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Поиск успешен",
@@ -40,14 +44,18 @@ public class LibraryCardRestController {
                 ResponseEntity.notFound().build() : ResponseEntity.ok(libraryCardService.getAll());
     }
 
+    @JsonView(View.All.class)
     @Operation(description = "Добавление новой записи в учетной книге")
-    @ApiResponse(responseCode = "200", description = "Запись добавлена",
-            content = {@Content(mediaType = "application/json",
-                    array = @ArraySchema(schema = @Schema(implementation = LibraryCard.class)))})
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Запись добавлена",
+                    content = {@Content(mediaType = "application/json",
+                            array = @ArraySchema(schema = @Schema(implementation = LibraryCard.class)))}),
+            @ApiResponse(responseCode = "400", description = "Ошибка в переданных данных", content = @Content)
+    })
 
     @PostMapping("/add")
     public ResponseEntity<List<LibraryCard>> addNewRecord(@Parameter(description = "Новая запись в картотеке")
-                                              @RequestBody LibraryCard libraryCard) {
+                                                              @Valid @RequestBody LibraryCard libraryCard) {
         libraryCardService.addNewRecord(libraryCard);
         return ResponseEntity.ok(libraryCardService.getAll());
     }

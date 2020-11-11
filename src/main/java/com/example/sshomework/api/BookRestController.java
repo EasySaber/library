@@ -1,7 +1,9 @@
 package com.example.sshomework.api;
 
 import com.example.sshomework.dto.Book;
+import com.example.sshomework.dto.View;
 import com.example.sshomework.service.book.BookService;
+import com.fasterxml.jackson.annotation.JsonView;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
@@ -14,6 +16,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
 
 /**
@@ -27,6 +30,7 @@ public class BookRestController {
 
     private final BookService bookService;
 
+    @JsonView(View.All.class)
     @Operation(description = "Показать все")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Поиск успешен",
@@ -41,6 +45,7 @@ public class BookRestController {
 
     }
 
+    @JsonView(View.All.class)
     @Operation(description = "Поиск по автору")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200",description = "Поиск успешен",
@@ -55,13 +60,20 @@ public class BookRestController {
                 ResponseEntity.notFound().build() : ResponseEntity.ok(bookService.findByAuthor(author));
     }
 
+    @JsonView(View.Public.class)
     @Operation(description = "Добаление новой книги")
-    @ApiResponse(responseCode = "200", description = "Данные добавлены",
-            content = {@Content(mediaType = "application/json",
-                    array = @ArraySchema(schema = @Schema(implementation = Book.class)))})
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Данные добавлены",
+                    content = {@Content(mediaType = "application/json",
+                            array = @ArraySchema(schema = @Schema(implementation = Book.class)))}),
+            @ApiResponse(responseCode = "400", description = "Ошибка в переданных данных", content = @Content),
+
+    })
     @PostMapping("/add")
-    public ResponseEntity<List<Book>> addNewBook(@Parameter(description = "Добавление данных о новой книге")
-                                                     @RequestBody Book book) {
+    public ResponseEntity<List<Book>> addNewBook(@JsonView(View.All.class)
+                                                     @Parameter(description = "Добавление данных о новой книге", required = true)
+                                                     @Valid @RequestBody Book book) {
+
         bookService.addNewBook(book);
         return ResponseEntity.ok(bookService.getAll());
     }
@@ -83,4 +95,5 @@ public class BookRestController {
             return ResponseEntity.ok().build();
         }
     }
+
 }
