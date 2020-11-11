@@ -60,13 +60,9 @@ public class BookRestController {
             content = {@Content(mediaType = "application/json",
                     array = @ArraySchema(schema = @Schema(implementation = Book.class)))})
     @PostMapping("/add")
-    public ResponseEntity<List<Book>> addNewBook(@RequestParam(name = "name")
-                                                     @Parameter(description = "Название книги") String name,
-                                                 @RequestParam(name = "author")
-                                                 @Parameter(description = "Автор") String author,
-                                                 @RequestParam(name = "genre")
-                                                     @Parameter(description = "Жанр") String genre) {
-        bookService.addNewBook(new Book(name, author, genre));
+    public ResponseEntity<List<Book>> addNewBook(@Parameter(description = "Добавление данных о новой книге")
+                                                     @RequestBody Book book) {
+        bookService.addNewBook(book);
         return ResponseEntity.ok(bookService.getAll());
     }
 

@@ -1,9 +1,11 @@
 package com.example.sshomework.dto;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.RequiredArgsConstructor;
+
+import java.time.LocalDate;
 
 /**
  * @author Aleksey Romodin
@@ -15,6 +17,11 @@ public class Person {
     private String firsName;
     private String middleName;
     private String lastName;
-    private Integer age;
+    private LocalDate dateOfBirth;
+
+    @JsonIgnore
+    public String getFullName() {
+        return firsName + " " + middleName + " " + lastName;
+    }
 }
 

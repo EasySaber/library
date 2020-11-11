@@ -3,6 +3,8 @@ package com.example.sshomework.service.person;
 import com.example.sshomework.dto.Person;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -15,9 +17,13 @@ public class PersonServiceImpl implements PersonService {
 
     private static final List<Person> personList = new ArrayList<>();
     static {
-        personList.add(new Person("Иван","Иванович","Иванов", 25));
-        personList.add(new Person("Петр","Петрович","Петров", 30));
-        personList.add(new Person("Константин","Николаевич","Ципкин", 55));
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        personList.add(new Person("Иван","Иванович","Иванов",
+                LocalDate.parse("1980-10-18", formatter)));
+        personList.add(new Person("Петр","Петрович","Петров",
+                LocalDate.parse("1982-11-17", formatter)));
+        personList.add(new Person("Константин","Николаевич","Ципкин",
+                LocalDate.parse("1983-12-01", formatter)));
     }
 
     @Override
@@ -26,15 +32,15 @@ public class PersonServiceImpl implements PersonService {
     }
 
     @Override
-    public List<Person> findByFIO(String FIO) {
+    public List<Person> findByFullName(String fullName) {
         return personList.stream()
-                .filter(person -> (getFIO(person).equals(FIO)))
+                .filter(person -> (person.getFullName().equals(fullName)))
                 .collect(Collectors.toList());
     }
 
     @Override
-    public void deletePerson(String FIO) {
-            personList.removeIf(person -> getFIO(person).equals(FIO));
+    public void deletePerson(String fullName) {
+        personList.removeIf(person ->person.getFullName().equals(fullName));
     }
 
     @Override
@@ -49,7 +55,4 @@ public class PersonServiceImpl implements PersonService {
         personList.add(person);
     }
 
-    private String getFIO(Person person) {
-        return person.getFirsName() + " " + person.getMiddleName() + " " + person.getLastName();
-    }
 }

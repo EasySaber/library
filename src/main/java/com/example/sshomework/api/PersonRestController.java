@@ -59,15 +59,9 @@ public class PersonRestController {
             content = {@Content(mediaType = "application/json",
                     array = @ArraySchema(schema = @Schema(implementation = Person.class)))})
     @PostMapping("/add")
-    public ResponseEntity<List<Person>> addNewPerson(@RequestParam(name = "firstName")
-                                                         @Parameter(description = "Имя") String firstName,
-                                                     @RequestParam(name = "middleName")
-                                                     @Parameter(description = "Отчество") String middleName,
-                                                     @RequestParam(name = "lastName")
-                                                         @Parameter(description = "Фамилия") String lastName,
-                                                     @RequestParam(name = "age")
-                                                         @Parameter(description = "Возраст") Integer age) {
-        personService.addNewPerson(new Person(firstName, middleName, lastName, age));
+    public ResponseEntity<List<Person>> addNewPerson(@Parameter(description = "Добавление данных нового человека")
+                                                         @RequestBody Person person)  {
+        personService.addNewPerson(person);
         return ResponseEntity.ok(personService.getAll());
     }
 
@@ -83,11 +77,11 @@ public class PersonRestController {
                                              @Parameter(description = "Отчество") String middleName,
                                              @RequestParam(name = "lastName")
                                                  @Parameter(description = "Фамилия") String lastName) {
-        String FIO = firstName + " " + middleName + " " + lastName;
-        if (personService.findByFIO(FIO).isEmpty()) {
+        String fullName = firstName + " " + middleName + " " + lastName;
+        if (personService.findByFullName(fullName).isEmpty()) {
             return ResponseEntity.notFound().build();
         } else {
-            personService.deletePerson(FIO);
+            personService.deletePerson(fullName);
             return ResponseEntity.ok().build();
         }
 

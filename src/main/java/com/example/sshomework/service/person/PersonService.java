@@ -11,6 +11,6 @@ public interface PersonService {
     void deletePerson(String FIO);
     void addNewPerson(Person person);
     List<Person> getAll();
-    List<Person> findByFIO(String FIO);
+    List<Person> findByFullName(String fullName);
     List<Person> findByFirstName(String firstName);
 }
