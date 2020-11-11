@@ -1,7 +1,9 @@
 package com.example.sshomework.api;
 
 import com.example.sshomework.dto.Person;
+import com.example.sshomework.dto.View;
 import com.example.sshomework.service.person.PersonService;
+import com.fasterxml.jackson.annotation.JsonView;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
@@ -14,6 +16,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
 
 /**
@@ -27,6 +30,7 @@ public class PersonRestController {
 
     private final PersonService personService;
 
+    @JsonView(View.Public.class)
     @Operation(description = "Показать всех")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Поиск успешен",
@@ -40,6 +44,7 @@ public class PersonRestController {
                 ResponseEntity.notFound().build() : ResponseEntity.ok(personService.getAll());
     }
 
+    @JsonView(View.Public.class)
     @Operation(description = "Поиск человека по имени")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Поиск успешен",
@@ -54,13 +59,18 @@ public class PersonRestController {
                 ResponseEntity.notFound().build() : ResponseEntity.ok(personService.findByFirstName(firstName));
     }
 
+    @JsonView(View.Private.class)
     @Operation(description = "Добавление нового человека")
-    @ApiResponse(responseCode = "200", description = "Данные добавлены",
-            content = {@Content(mediaType = "application/json",
-                    array = @ArraySchema(schema = @Schema(implementation = Person.class)))})
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Данные добавлены",
+                    content = {@Content(mediaType = "application/json",
+                            array = @ArraySchema(schema = @Schema(implementation = Person.class)))}),
+            @ApiResponse(responseCode = "400", description = "Ошибка в переданных данных", content = @Content),
+    })
     @PostMapping("/add")
-    public ResponseEntity<List<Person>> addNewPerson(@Parameter(description = "Добавление данных нового человека")
-                                                         @RequestBody Person person)  {
+    public ResponseEntity<List<Person>> addNewPerson(@JsonView(View.Public.class)
+                                                         @Parameter(description = "Добавление данных нового человека")
+                                                         @Valid @RequestBody Person person)  {
         personService.addNewPerson(person);
         return ResponseEntity.ok(personService.getAll());
     }
