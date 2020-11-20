@@ -1,5 +1,6 @@
 package com.example.sshomework.dto;
 
+import com.example.sshomework.dto.view.View;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonView;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -20,10 +21,10 @@ import java.time.ZonedDateTime;
 public class LibraryCard {
     @Valid
     @JsonView(View.Public.class)
-    private Person person;
+    private PersonDto personDto;
     @Valid
     @JsonView(View.Public.class)
-    private Book book;
+    private BookDto bookDto;
     @NotNull
     @JsonView(View.Public.class)
     @Schema(pattern = "yyyy-MM-dd HH:mm:ss.SSSXXX", example = "2020-10-20 12:49:23.123+03:00")
