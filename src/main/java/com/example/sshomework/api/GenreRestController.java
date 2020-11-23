@@ -16,6 +16,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.List;
 
 /**
  * @author Aleksey Romodin
@@ -37,8 +38,8 @@ public class GenreRestController {
     })
     @GetMapping("/getAll")
     public ResponseEntity<?> getAll() {
-        return genreService.getAll().isEmpty() ? ResponseEntity.notFound().build() :
-                ResponseEntity.ok(genreService.getAll());
+        List<GenreDto> genres = genreService.getAll();
+        return genres.isEmpty() ? ResponseEntity.notFound().build() : ResponseEntity.ok(genres);
     }
 
     @Operation(description = "Добавление нового жанра(без книги)")
@@ -64,7 +65,7 @@ public class GenreRestController {
     })
     @GetMapping("/getStatistics")
     public ResponseEntity<?> getStatistics() {
-        return genreService.getGenreStatistics().isEmpty() ? ResponseEntity.notFound().build() :
-                ResponseEntity.ok(genreService.getGenreStatistics());
+        List<GenreStatisticsProjection> genres = genreService.getGenreStatistics();
+        return genres.isEmpty() ? ResponseEntity.notFound().build() : ResponseEntity.ok(genres);
     }
 }

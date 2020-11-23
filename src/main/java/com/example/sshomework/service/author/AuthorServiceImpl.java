@@ -1,10 +1,9 @@
 package com.example.sshomework.service.author;
 
 import com.example.sshomework.dto.AuthorDto;
-import com.example.sshomework.entity.Book;
+import com.example.sshomework.entity.Author;
 import com.example.sshomework.mappers.AuthorMapper;
 import com.example.sshomework.repository.AuthorRepository;
-import com.example.sshomework.repository.BookRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -20,13 +19,11 @@ public class AuthorServiceImpl implements AuthorService {
 
     private final AuthorRepository authorRepository;
     private final AuthorMapper authorMapper;
-    private final BookRepository bookRepository;
-
 
     @Override
     public Optional<AuthorDto> getAuthorById(Long id){
-        return authorRepository.findById(id).isPresent() ?
-               Optional.of(authorMapper.toDto(authorRepository.findById(id).get())) : Optional.empty();
+        Optional<Author> author = authorRepository.findById(id);
+        return author.map(authorMapper::toDto);
     }
 
     @Override
@@ -36,23 +33,18 @@ public class AuthorServiceImpl implements AuthorService {
 
     @Override
     public AuthorDto addNewAuthor(AuthorDto authorDto){
+        Author author = authorMapper.toEntity(authorDto);
+        author.getBooks().forEach(book -> book.setAuthorBook(author));
+        authorRepository.save(author);
 
-        authorRepository.save(authorMapper.toEntity(authorDto));
-
-        //Сохраняем книги, если они добавлены
-        if (authorDto.getBooks() != null) {
-            for (Book book : authorMapper.toEntity(authorDto).getBooks()) {
-                book.setAuthorBook(authorRepository.findFirstByOrderByIdDesc());
-                bookRepository.save(book);
-            }
-        }
         return authorMapper.toDto(authorRepository.findFirstByOrderByIdDesc());
     }
 
     @Override
     public Boolean deleteAuthorById(Long id){
-        if (authorRepository.findById(id).isPresent()) {
-            if (bookRepository.findBookByAuthorBookId(id).isEmpty()) {
+        Optional<Author> author = authorRepository.findById(id);
+        if (author.isPresent()) {
+            if (author.get().getBooks().size() == 0) {
                 authorRepository.deleteById(id);
                 return true;
             }

@@ -17,6 +17,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.List;
+import java.util.Optional;
 
 /**
  * @author Aleksey Romodin
@@ -39,8 +41,8 @@ public class PersonRestController {
     })
     @GetMapping("/getAll")
     public ResponseEntity<?> getAllPersons() {
-        return personService.getAll().isEmpty() ?
-                ResponseEntity.notFound().build() : ResponseEntity.ok(personService.getAll());
+        List<PersonDto> persons = personService.getAll();
+        return persons.isEmpty() ? ResponseEntity.notFound().build() : ResponseEntity.ok(persons);
     }
 
     @JsonView(View.PersonOfAllTheBook.class)
@@ -53,9 +55,9 @@ public class PersonRestController {
     })
     @GetMapping("/getBooksByAuthorId")
     public ResponseEntity<?> getBooksByAuthorId(@RequestParam(name = "id")
-                                                 @Parameter(description = "id пользователя") Long id) {
-        return personService.getBooksByAuthorId(id) != null ?
-                ResponseEntity.ok(personService.getBooksByAuthorId(id)) : ResponseEntity.notFound().build();
+                                                    @Parameter(description = "id пользователя") Long id) {
+        PersonDto person = personService.getBooksByAuthorId(id);
+        return person != null ? ResponseEntity.ok(person) : ResponseEntity.notFound().build();
     }
 
     @JsonView(View.All.class)
@@ -85,7 +87,7 @@ public class PersonRestController {
                                                        @Parameter(description = "Отчество") String middleName,
                                                        @RequestParam(name = "lastName")
                                                            @Parameter(description = "Фамилия") String lastName) {
-        return  personService.deletePersonByFullName(firstName, middleName, lastName) ?
+        return  personService.deletePersonsByFullName(firstName, middleName, lastName) ?
                 ResponseEntity.ok().build() : ResponseEntity.notFound().build();
 
     }
@@ -101,8 +103,8 @@ public class PersonRestController {
     @PutMapping("/update")
     public ResponseEntity<?> updatePerson(@Parameter(description = "Обновление данных пользователя")
                                               @Valid @RequestBody PersonDto personDto)  {
-        return personService.updatePerson(personDto).isPresent() ?
-                ResponseEntity.ok(personService.updatePerson(personDto)) : ResponseEntity.badRequest().build();
+        Optional<PersonDto> person = personService.updatePerson(personDto);
+        return person.isPresent() ? ResponseEntity.ok(person) : ResponseEntity.badRequest().build();
     }
 
     @Operation(description = "Удаление данных пользователя по id")
@@ -129,9 +131,8 @@ public class PersonRestController {
                                                                @RequestParam(name = "personId") Long personId,
                                                            @Parameter(description = "Id книги")
                                                            @RequestParam(name = "bookId") Long bookId)  {
-        return personService.addNewPostLibraryCard(personId, bookId) != null ?
-                ResponseEntity.ok(personService.addNewPostLibraryCard(personId, bookId)) :
-                ResponseEntity.notFound().build();
+        PersonDto person = personService.addNewPostLibraryCard(personId, bookId);
+        return person != null ? ResponseEntity.ok(person) : ResponseEntity.notFound().build();
     }
 
     @JsonView(View.PersonOfAllTheBookSmall.class)
@@ -144,11 +145,10 @@ public class PersonRestController {
     })
     @DeleteMapping("/deletePostLibraryCard")
     public ResponseEntity<PersonDto> deletePostLibraryCard(@Parameter(description = "Id пользователя")
-                                                           @RequestParam(name = "personId") Long personId,
+                                                               @RequestParam(name = "personId") Long personId,
                                                            @Parameter(description = "Id книги")
                                                            @RequestParam(name = "bookId") Long bookId)  {
-        return personService.deletePostLibraryCard(personId, bookId) != null ?
-                ResponseEntity.ok(personService.deletePostLibraryCard(personId, bookId)) :
-                ResponseEntity.notFound().build();
+        PersonDto person = personService.deletePostLibraryCard(personId, bookId);
+        return person != null ? ResponseEntity.ok(person) : ResponseEntity.notFound().build();
     }
 }

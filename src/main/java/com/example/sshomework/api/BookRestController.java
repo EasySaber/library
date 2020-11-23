@@ -45,9 +45,8 @@ public class BookRestController {
                                                @Parameter(description = "Фамилия автора")
                                                    @RequestParam(name = "lastName", required = false) String lastName)
     {
-        return bookService.getByAuthorFilter(firstName, middleName, lastName).isEmpty() ?
-                ResponseEntity.notFound().build() :
-                ResponseEntity.ok(bookService.getByAuthorFilter(firstName, middleName, lastName));
+        List<BookDto> books = bookService.getByAuthorFilter(firstName, middleName, lastName);
+        return books.isEmpty() ? ResponseEntity.notFound().build() : ResponseEntity.ok(books);
     }
 
     @JsonView(View.BookPost.class)
@@ -61,16 +60,16 @@ public class BookRestController {
     @GetMapping("/getByGenre")
     public ResponseEntity<?> getByGenre(@RequestParam(name = "id")
                                             @Parameter(description = "Id жанра") Long id) {
-        if (bookService.getByGenre(id) != null) {
-            return bookService.getByGenre(id).isEmpty() ?
-                    ResponseEntity.notFound().build() : ResponseEntity.ok(bookService.getByGenre(id));
+        List<BookDto> books = bookService.getByGenre(id);
+        if (books != null) {
+            return books.isEmpty() ? ResponseEntity.notFound().build() : ResponseEntity.ok(books);
         }
         return ResponseEntity.notFound().build();
     }
 
 
     @JsonView(View.BookPost.class)
-    @Operation(description = "Добаление новой книги")
+    @Operation(description = "Добавление новой книги")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Данные добавлены",
                     content = {@Content(mediaType = "application/json",
@@ -82,8 +81,8 @@ public class BookRestController {
     public ResponseEntity<?> addNewBook(@JsonView(View.Book.class)
                                             @Parameter(description = "Добавление данных о новой книге")
                                             @RequestBody BookDto bookDto) {
-        return bookService.addNewBook(bookDto) != null ?
-                ResponseEntity.ok(bookService.addNewBook(bookDto)) : ResponseEntity.badRequest().build();
+        BookDto book = bookService.addNewBook(bookDto);
+        return book != null ? ResponseEntity.ok(book) : ResponseEntity.badRequest().build();
     }
 
     @Operation(description = "Удаление книги по ID")
@@ -95,8 +94,7 @@ public class BookRestController {
     @DeleteMapping("/delete")
     public ResponseEntity<Void> deleteBook(@RequestParam(name = "id")
                                                @Parameter(description = "Id книги") Long id) {
-        return bookService.deleteBookById(id) ?
-                ResponseEntity.ok().build() : ResponseEntity.notFound().build();
+        return bookService.deleteBookById(id) ? ResponseEntity.ok().build() : ResponseEntity.notFound().build();
     }
 
     @JsonView(View.BookPost.class)
@@ -113,8 +111,8 @@ public class BookRestController {
                                         @RequestParam(name = "bookId") Long bookId,
                                           @Parameter(description = "Id жанров книги")
                                           @RequestParam(name = "genres[]") List<Long> genres) {
-        return bookService.updateGenres(bookId, genres) != null ?
-                ResponseEntity.ok(bookService.updateGenres(bookId, genres)) : ResponseEntity.notFound().build();
+        BookDto book = bookService.updateGenres(bookId, genres);
+        return book != null ? ResponseEntity.ok(book) : ResponseEntity.notFound().build();
     }
 
 }

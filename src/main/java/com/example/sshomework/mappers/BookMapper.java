@@ -5,6 +5,8 @@ import com.example.sshomework.entity.Book;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
+import java.util.List;
+
 /**
  * @author Aleksey Romodin
  */
@@ -12,4 +14,14 @@ import org.mapstruct.Mapping;
 public interface BookMapper extends MapMapper<BookDto, Book> {
     @Mapping(source = "authorBookDto.id", target = "authorBook.id")
     Book toEntity(BookDto book);
+
+
+    @Mapping(target = "authorBookDto", source = "authorBook")
+    @Mapping(target = "authorBookDto.books", ignore = true)
+    BookDto toDto(Book book);
+
+    @Mapping(source = "authorBook", target = "authorBookDto")
+    List<BookDto> toDtoList(List<Book> books);
+
 }
+

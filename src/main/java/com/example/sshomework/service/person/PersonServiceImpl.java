@@ -28,9 +28,11 @@ public class PersonServiceImpl implements PersonService {
     }
 
     @Override
-    public Boolean deletePersonByFullName(String firstName, String middleName, String lastName) {
-        if (!personRepository.findByFirstNameAndMiddleNameAndLastName(firstName, middleName, lastName).isEmpty()) {
-            personRepository.deleteByFirstNameAndMiddleNameAndLastName(firstName, middleName, lastName);
+    public Boolean deletePersonsByFullName(String firstName, String middleName, String lastName) {
+        List<Person> persons =
+                personRepository.findByFirstNameAndMiddleNameAndLastName(firstName, middleName, lastName);
+        if (!persons.isEmpty()) {
+            personRepository.deleteAll(persons);
             return true;
         }
         return false;
@@ -38,10 +40,8 @@ public class PersonServiceImpl implements PersonService {
 
     @Override
     public PersonDto getBooksByAuthorId(Long id) {
-        if (personRepository.findById(id).isPresent()) {
-            return personMapper.toDto(personRepository.findById(id).get());
-        }
-        return null;
+        Optional<Person> person = personRepository.findById(id);
+        return person.map(personMapper::toDto).orElse(null);
     }
 
     @Override
@@ -52,8 +52,9 @@ public class PersonServiceImpl implements PersonService {
 
     @Override
     public Optional<PersonDto> updatePerson(PersonDto personDto) {
-        if (personRepository.findById(personDto.getId()).isPresent()) {
-            Person person = personMapper.toEntity(personDto);
+        Person person = personMapper.toEntity(personDto);
+
+        if (personRepository.findById(person.getId()).isPresent()) {
             personRepository.save(person);
             return Optional.of(personMapper.toDto(person));
         }

@@ -37,6 +37,6 @@ public class Author {
     private String lastName;
 
     @JsonView(View.Public.class)
-    @OneToMany(mappedBy = "authorBook", fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "authorBook", fetch = FetchType.EAGER, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     private Set<Book> books;
 }

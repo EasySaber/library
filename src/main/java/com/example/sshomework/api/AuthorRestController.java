@@ -17,6 +17,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.List;
+import java.util.Optional;
 
 /**
  * @author Aleksey Romodin
@@ -40,8 +42,8 @@ public class AuthorRestController {
     @GetMapping("/getById")
     public ResponseEntity<?> getAuthorById(@RequestParam(name = "id")
                                                @Parameter(description = "Id автора") Long id) {
-        return !authorService.getAuthorById(id).isPresent() ?
-                ResponseEntity.notFound().build() : ResponseEntity.ok(authorService.getAuthorById(id).get());
+        Optional<AuthorDto> author = authorService.getAuthorById(id);
+        return !author.isPresent() ? ResponseEntity.notFound().build() : ResponseEntity.ok(author.get());
 
     }
 
@@ -55,10 +57,9 @@ public class AuthorRestController {
     })
     @GetMapping("/getAll")
     public ResponseEntity<?> getAll() {
-        return authorService.getAll().isEmpty() ?
-                ResponseEntity.notFound().build() : ResponseEntity.ok(authorService.getAll());
+        List<AuthorDto> authorDtoList = authorService.getAll();
+        return authorDtoList.isEmpty() ? ResponseEntity.notFound().build() : ResponseEntity.ok(authorDtoList);
     }
-
 
     @JsonView(View.Public.class)
     @Operation(description = "Показать список книг автора: автор, книги, жанры.")
@@ -70,8 +71,8 @@ public class AuthorRestController {
     })
     @GetMapping("/getBooksByAuthor")
     public ResponseEntity<?> getBooksByAuthor() {
-        return authorService.getAll().isEmpty() ?
-                ResponseEntity.notFound().build() : ResponseEntity.ok(authorService.getAll());
+        List<AuthorDto> authorDtoList = authorService.getAll();
+        return authorDtoList.isEmpty() ? ResponseEntity.notFound().build() : ResponseEntity.ok(authorDtoList);
     }
 
     @JsonView(View.AuthorOfAllTheBook.class)
@@ -93,7 +94,7 @@ public class AuthorRestController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Запись удалена", content = @Content),
             @ApiResponse(responseCode = "400",
-                    description = "Невозможно удалить запись: у автора есть книг, либо автор не найден.",
+                    description = "Невозможно удалить запись: у автора есть книги, либо автор не найден.",
                     content = @Content)
     })
     @DeleteMapping("/delete")

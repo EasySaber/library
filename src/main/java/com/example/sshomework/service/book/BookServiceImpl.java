@@ -1,7 +1,6 @@
 package com.example.sshomework.service.book;
 
 import com.example.sshomework.dto.BookDto;
-import com.example.sshomework.dto.genre.GenreDto;
 import com.example.sshomework.entity.Book;
 import com.example.sshomework.entity.Genre;
 import com.example.sshomework.mappers.BookMapper;
@@ -13,10 +12,11 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * @author Aleksey Romodin
@@ -31,27 +31,34 @@ public class BookServiceImpl implements BookService {
     private final AuthorRepository authorRepository;
 
     @Override
-    public Book addNewBook(BookDto bookDto) {
+    public BookDto addNewBook(BookDto bookDto) {
 
-        Set<GenreDto> genreDtoSet = bookDto.getGenres();
-
-        for (GenreDto genre : genreDtoSet) {
-            if (!genreRepository.findById(genre.getId()).isPresent()) {
+        Book book = bookMapper.toEntity(bookDto);
+        if (authorRepository.findById(book.getAuthorBook().getId()).isPresent()) {
+            if (book.getGenres().isEmpty()) {
                 return null;
+            } else {
+                Set<Genre> addGenres = book.getGenres().stream()
+                        .filter(genre -> genreRepository.findById(genre.getId()).isPresent())
+                        .collect(Collectors.toSet());
+                if (!addGenres.isEmpty()) {
+                    book.getGenres().clear();
+                    book.setGenres(addGenres);
+                } else {
+                    return null;
+                }
             }
-        }
-
-        if (authorRepository.findById(bookDto.getAuthorBookDto().getId()).isPresent()) {
-            bookRepository.save(bookMapper.toEntity(bookDto));
-            return bookRepository.findFirstByOrderByIdDesc();
+            bookRepository.save(book);
+            return bookMapper.toDto(bookRepository.findFirstByOrderByIdDesc());
         }
         return null;
     }
 
     @Override
     public Boolean deleteBookById(Long id) {
-        if (bookRepository.findById(id).isPresent()) {
-            if (bookRepository.findById(id).get().getPersons().isEmpty()) {
+        Optional<Book> book = bookRepository.findById(id);
+        if (book.isPresent()) {
+            if (book.get().getPersons().isEmpty()) {
                 bookRepository.deleteById(id);
                 return true;
             }
@@ -60,20 +67,14 @@ public class BookServiceImpl implements BookService {
     }
 
     @Override
-    public List<Book> getByGenre(Long id) {
-        List<Book> books = new ArrayList<>();
-        if (genreRepository.findById(id).isPresent()) {
-            for (Book book : bookRepository.findAll()) {
-                if (book.getGenres().stream().anyMatch(genre -> genre.getId().equals(id))) {
-                    books.add(book);
-                }
-            }
-        }
-        return books;
+    public List<BookDto> getByGenre(Long id) {
+        return bookMapper.toDtoList(bookRepository.findAll().stream()
+                .filter(book -> book.getGenres().stream().anyMatch(genre -> genre.getId().equals(id)))
+                .collect(Collectors.toList()));
     }
 
     @Override
-    public List<Book> getByAuthorFilter(String firstName, String middleName, String lastName) {
+    public List<BookDto> getByAuthorFilter(String firstName, String middleName, String lastName) {
 
         Specification<Book> specification = null;
 
@@ -87,7 +88,7 @@ public class BookServiceImpl implements BookService {
         if (lastName != null) {
             specification = draftSpecification(specification, "lastName", lastName);
         }
-        return bookRepository.findAll(specification);
+        return bookMapper.toDtoList(bookRepository.findAll(specification));
     }
 
     private Specification<Book> draftSpecification(
@@ -104,22 +105,21 @@ public class BookServiceImpl implements BookService {
     }
 
     @Override
-    public Book updateGenres(Long id, List<Long> genres){
+    public BookDto updateGenres(Long id, List<Long> genres){
 
-        if (bookRepository.findById(id).isPresent() & !genres.isEmpty()) {
-           Set<Genre> genreSet = new HashSet<>();
-           for (Long genreId : genres) {
-               if (genreRepository.findById(genreId).isPresent()) {
-                   genreSet.add(genreRepository.findById(genreId).get());
-               }
-           }
-           if (genreSet.size() > 0) {
-               Book book = bookRepository.findById(id).get();
-               book.getGenres().clear();
-               book.setGenres(genreSet);
-               bookRepository.save(book);
-               return bookRepository.findById(id).get();
-           }
+        Optional<Book> book = bookRepository.findById(id);
+        if (book.isPresent() & !genres.isEmpty()) {
+            Set<Genre> genreSet = new HashSet<>();
+            for (Long genreId : genres) {
+                Optional<Genre> genre = genreRepository.findById(genreId);
+                genre.ifPresent(genreSet::add);
+            }
+            if (genreSet.size() > 0) {
+                book.get().getGenres().clear();
+                book.get().setGenres(genreSet);
+                bookRepository.save(book.get());
+                return bookMapper.toDto(book.get());
+            }
         }
         return null;
     }

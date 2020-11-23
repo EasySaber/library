@@ -9,7 +9,7 @@ import java.util.Optional;
  * @author Aleksey Romodin
  */
 public interface PersonService {
-    Boolean deletePersonByFullName(String firstName, String middleName, String lastName);
+    Boolean deletePersonsByFullName(String firstName, String middleName, String lastName);
     PersonDto addNewPerson(PersonDto personDto);
     Optional<PersonDto> updatePerson(PersonDto personDto);
     Boolean deletePersonById(Long id);

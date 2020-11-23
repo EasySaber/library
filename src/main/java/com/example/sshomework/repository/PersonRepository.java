@@ -17,7 +17,5 @@ public interface PersonRepository extends JpaRepository<Person, Long> {
     Person findFirstByOrderByIdDesc();
     //Поиск совпадений по ФИО
     List<Person> findByFirstNameAndMiddleNameAndLastName(String firstName, String middleName, String lastName);
-    //Удаление по ФИО
-    void deleteByFirstNameAndMiddleNameAndLastName(String firstName, String middleName, String lastName);
 
 }
