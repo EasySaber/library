@@ -20,7 +20,7 @@ import java.util.Set;
 @AllArgsConstructor
 @NoArgsConstructor
 @Table(name = "person")
-public class Person {
+public class Person extends MainEntity{
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

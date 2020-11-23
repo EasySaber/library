@@ -16,7 +16,7 @@ import java.util.Set;
 @AllArgsConstructor
 @NoArgsConstructor
 @Table(name = "book")
-public class Book {
+public class Book extends MainEntity{
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -26,7 +26,6 @@ public class Book {
     @JsonView({View.Public.class, View.PersonOfAllTheBookSmall.class, View.Book.class})
     @Column(name = "book_name")
     private String bookName;
-
 
     @ManyToOne
     @JoinColumn(name = "author_id")

@@ -19,7 +19,7 @@ import java.util.Set;
 @AllArgsConstructor
 @NoArgsConstructor
 @Table(name = "author")
-public class Author {
+public class Author extends MainEntity{
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

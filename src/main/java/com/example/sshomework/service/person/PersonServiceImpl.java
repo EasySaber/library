@@ -1,6 +1,7 @@
 package com.example.sshomework.service.person;
 
 import com.example.sshomework.dto.PersonDto;
+import com.example.sshomework.entity.Book;
 import com.example.sshomework.entity.Person;
 import com.example.sshomework.mappers.PersonMapper;
 import com.example.sshomework.repository.BookRepository;
@@ -10,6 +11,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 /**
  * @author Aleksey Romodin
@@ -52,11 +54,17 @@ public class PersonServiceImpl implements PersonService {
 
     @Override
     public Optional<PersonDto> updatePerson(PersonDto personDto) {
-        Person person = personMapper.toEntity(personDto);
 
-        if (personRepository.findById(person.getId()).isPresent()) {
-            personRepository.save(person);
-            return Optional.of(personMapper.toDto(person));
+        Person personIncoming= personMapper.toEntity(personDto);
+        Person personStored = personRepository.findById(personIncoming.getId()).orElse(null);
+
+        if (personStored != null) {
+            personStored.setFirstName(personIncoming.getFirstName());
+            personStored.setMiddleName(personIncoming.getMiddleName());
+            personStored.setLastName(personIncoming.getLastName());
+            personStored.setDateOfBirth(personIncoming.getDateOfBirth());
+            personRepository.save(personStored);
+            return Optional.of(personMapper.toDto(personStored));
         }
         return Optional.empty();
     }
@@ -81,19 +89,19 @@ public class PersonServiceImpl implements PersonService {
     }
 
     private PersonDto updateLibraryCard(Long personId, Long bookId, Boolean operation) {
-        if (personRepository.findById(personId).isPresent() & bookRepository.findById(bookId).isPresent()) {
-            Person person = personRepository.findById(personId).get();
-            if (operation) {
-                if (person.getBooks().stream().allMatch(book -> book.getId().equals(bookId))) {
-                    person.getBooks().removeIf(book->(book.getId().equals(bookId)));
-                } else {
-                    return null;
-                }
-            } else {
-                person.getBooks().add(bookRepository.findById(bookId).get());
+        Person person = personRepository.findById(personId).orElse(null);
+        Book bookIncoming = bookRepository.findById(bookId).orElse(null);
+        if (person != null & bookIncoming != null) {
+            Set<Book> bookSet = person.getBooks();
+            if (operation) { //Удаление книги
+
+                bookSet.removeIf(book -> (book.getId().equals(bookId)));
+            } else {         //Добавление книги
+                bookSet.add(bookIncoming);
+                person.setBooks(bookSet);
             }
             personRepository.save(person);
-            return personMapper.toDto(personRepository.findById(personId).get());
+            return personMapper.toDto(person);
         }
         return null;
     }

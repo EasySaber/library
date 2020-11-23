@@ -3,10 +3,7 @@ package com.example.sshomework.entity;
 import com.example.sshomework.dto.view.View;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonView;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import javax.persistence.*;
 import java.util.Set;
@@ -19,8 +16,9 @@ import java.util.Set;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
+@ToString
 @Table(name = "genre")
-public class Genre {
+public class Genre extends MainEntity{
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
