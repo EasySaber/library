@@ -28,15 +28,19 @@ public class Person {
     private Long id;
 
     @JsonView({View.Public.class, View.PersonOfAllTheBookSmall.class})
+    @Column(name = "first_name")
     private String firstName;
 
     @JsonView({View.Public.class, View.PersonOfAllTheBookSmall.class})
+    @Column(name = "middle_name")
     private String middleName;
 
     @JsonView({View.Public.class, View.PersonOfAllTheBookSmall.class})
+    @Column(name = "last_name")
     private String lastName;
 
     @JsonView({View.Public.class, View.PersonOfAllTheBookSmall.class})
+    @Column(name = "date_of_birth")
     private LocalDate dateOfBirth;
 
     @JsonView(View.PersonOfAllTheBookSmall.class)

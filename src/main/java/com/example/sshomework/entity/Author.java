@@ -28,12 +28,15 @@ public class Author {
     private Long id;
 
     @JsonView({View.Public.class, View.Private.class, View.PersonOfAllTheBookSmall.class, View.BookPost.class})
+    @Column(name = "first_name")
     private String firstName;
 
     @JsonView({View.Public.class, View.Private.class, View.PersonOfAllTheBookSmall.class, View.BookPost.class})
+    @Column(name = "middle_name")
     private String middleName;
 
     @JsonView({View.Public.class, View.Private.class, View.PersonOfAllTheBookSmall.class, View.BookPost.class})
+    @Column(name = "last_name")
     private String lastName;
 
     @JsonView(View.Public.class)

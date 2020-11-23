@@ -24,6 +24,7 @@ public class Book {
     private Long id;
 
     @JsonView({View.Public.class, View.PersonOfAllTheBookSmall.class, View.Book.class})
+    @Column(name = "book_name")
     private String bookName;
 
 

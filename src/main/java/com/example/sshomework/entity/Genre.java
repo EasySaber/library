@@ -28,6 +28,7 @@ public class Genre {
     private Long id;
 
     @JsonView({View.Public.class, View.PersonOfAllTheBook.class, View.BookPost.class})
+    @Column(name = "genre_name")
     private String genreName;
 
     @JsonIgnore
