@@ -217,19 +217,3 @@ databaseChangeLog:
             referencedColumnNames: id
             onDelete: 'CASCADE'
             onUpdate: 'RESTRICT'
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
