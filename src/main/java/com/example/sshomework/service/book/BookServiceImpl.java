@@ -1,6 +1,7 @@
 package com.example.sshomework.service.book;
 
 import com.example.sshomework.dto.BookDto;
+import com.example.sshomework.entity.Author;
 import com.example.sshomework.entity.Book;
 import com.example.sshomework.entity.Genre;
 import com.example.sshomework.mappers.BookMapper;
@@ -34,16 +35,21 @@ public class BookServiceImpl implements BookService {
     public BookDto addNewBook(BookDto bookDto) {
 
         Book book = bookMapper.toEntity(bookDto);
-        if (authorRepository.findById(book.getAuthorBook().getId()).isPresent()) {
+        Author author = authorRepository.findById(book.getAuthorBook().getId()).orElse(null);
+        if (author != null) {
+            book.setAuthorBook(author);
             if (book.getGenres().isEmpty()) {
                 return null;
             } else {
-                Set<Genre> addGenres = book.getGenres().stream()
-                        .filter(genre -> genreRepository.findById(genre.getId()).isPresent())
-                        .collect(Collectors.toSet());
+                Set<Genre> addGenres = new HashSet<>();
+                book.getGenres().forEach(genre ->
+                        genreRepository.findById(genre.getId()).ifPresent(addGenres::add));
+
                 if (!addGenres.isEmpty()) {
+                    addGenres.forEach(genre -> genre.getBooks().add(book));
                     book.getGenres().clear();
                     book.setGenres(addGenres);
+
                 } else {
                     return null;
                 }

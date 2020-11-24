@@ -94,7 +94,7 @@ public class AuthorRestController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Запись удалена", content = @Content),
             @ApiResponse(responseCode = "400",
-                    description = "Невозможно удалить запись: у автора есть книги, либо автор не найден.",
+                    description = "Невозможно удалить запись: одна из книг автора находится у читателя.",
                     content = @Content)
     })
     @DeleteMapping("/delete")

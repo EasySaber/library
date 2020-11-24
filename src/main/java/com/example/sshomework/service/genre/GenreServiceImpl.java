@@ -2,6 +2,7 @@ package com.example.sshomework.service.genre;
 
 import com.example.sshomework.dto.genre.GenreDto;
 import com.example.sshomework.dto.genre.GenreStatisticsProjection;
+import com.example.sshomework.entity.Genre;
 import com.example.sshomework.mappers.GenreMapper;
 import com.example.sshomework.repository.GenreRepository;
 import lombok.RequiredArgsConstructor;
@@ -33,4 +34,19 @@ public class GenreServiceImpl implements GenreService{
     public List<GenreStatisticsProjection> getGenreStatistics(){
         return genreRepository.getGenreStatistics();
     }
+
+    @Override
+    public Integer deleteGenre(Long id) {
+        Genre genreStored = genreRepository.findById(id).orElse(null);
+        if (genreStored != null) {
+            if (genreStored.getBooks().stream().noneMatch(book -> book.getGenres().size() == 1)) {
+                genreRepository.delete(genreStored);
+                return 200;
+            } else {
+                return 400;
+            }
+        }
+        return  404;
+    }
+
 }

@@ -42,7 +42,7 @@ public class Book extends MainEntity{
     @JsonView(View.All.class)
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "library_card",
-            joinColumns = @JoinColumn(name = "person_id"),
-            inverseJoinColumns = @JoinColumn(name = "book_id"))
+            joinColumns = @JoinColumn(name = "book_id"),
+            inverseJoinColumns = @JoinColumn(name = "person_id"))
     private Set<Person> persons;
 }

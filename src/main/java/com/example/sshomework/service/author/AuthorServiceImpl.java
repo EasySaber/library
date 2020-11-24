@@ -56,9 +56,9 @@ public class AuthorServiceImpl implements AuthorService {
 
     @Override
     public Boolean deleteAuthorById(Long id){
-        Optional<Author> author = authorRepository.findById(id);
-        if (author.isPresent()) {
-            if (author.get().getBooks().size() == 0) {
+        Author author = authorRepository.findById(id).orElse(null);
+        if (author != null) {
+            if (author.getBooks().stream().noneMatch(book -> book.getPersons().size() > 0)) {
                 authorRepository.deleteById(id);
                 return true;
             }

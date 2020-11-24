@@ -12,4 +12,5 @@ public interface GenreService {
     List<GenreDto> getAll();
     void addNewGenre(GenreDto genreDto);
     List<GenreStatisticsProjection> getGenreStatistics();
+    Integer deleteGenre(Long id);
 }

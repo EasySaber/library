@@ -12,7 +12,7 @@ import java.util.List;
  */
 @Mapper
 public interface BookMapper extends MapMapper<BookDto, Book> {
-    @Mapping(source = "authorBookDto.id", target = "authorBook.id")
+    @Mapping(source = "authorBookDto", target = "authorBook")
     Book toEntity(BookDto book);
 
 
