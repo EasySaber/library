@@ -36,17 +36,13 @@ public class GenreServiceImpl implements GenreService{
     }
 
     @Override
-    public Integer deleteGenre(Long id) {
+    public Boolean deleteGenre(Long id) {
         Genre genreStored = genreRepository.findById(id).orElse(null);
         if (genreStored != null) {
-            if (genreStored.getBooks().stream().noneMatch(book -> book.getGenres().size() == 1)) {
-                genreRepository.delete(genreStored);
-                return 200;
-            } else {
-                return 400;
-            }
+            genreRepository.delete(genreStored);
+            return true;
         }
-        return  404;
+        return  false;
     }
 
 }

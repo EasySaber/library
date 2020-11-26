@@ -72,18 +72,11 @@ public class GenreRestController {
     @Operation(description = "Удаление жанра по ID.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Операция завершена", content = @Content),
-            @ApiResponse(responseCode = "400", description = "В картотеке есть книги с одним жанром", content = @Content),
             @ApiResponse(responseCode = "404", description = "Жанр не найден", content = @Content)
     })
     @DeleteMapping("/delete")
     public ResponseEntity<Void> deleteGenre(@Parameter(description = "Id жанра")
                                                 @RequestParam(name = "id") Long id) {
-        Integer result = genreService.deleteGenre(id);
-        switch (result) {
-            case (200) : return ResponseEntity.ok().build();
-            case (400) : return ResponseEntity.badRequest().build();
-            case (404) : return ResponseEntity.notFound().build();
-        }
-        return null;
+        return genreService.deleteGenre(id) ? ResponseEntity.ok().build() : ResponseEntity.notFound().build();
     }
 }
