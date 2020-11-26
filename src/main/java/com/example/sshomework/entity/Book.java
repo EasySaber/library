@@ -40,9 +40,6 @@ public class Book extends MainEntity{
     private Set<Genre> genres;
 
     @JsonView(View.All.class)
-    @ManyToMany(fetch = FetchType.EAGER)
-    @JoinTable(name = "library_card",
-            joinColumns = @JoinColumn(name = "book_id"),
-            inverseJoinColumns = @JoinColumn(name = "person_id"))
-    private Set<Person> persons;
+    @OneToMany(mappedBy = "book", fetch = FetchType.EAGER, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    private Set<LibraryCard> persons;
 }

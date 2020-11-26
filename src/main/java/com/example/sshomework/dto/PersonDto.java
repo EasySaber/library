@@ -23,7 +23,7 @@ import java.util.Set;
 @NoArgsConstructor
 public class PersonDto {
 
-    @JsonView({View.All.class, View.PersonOfAllTheBookSmall.class})
+    @JsonView({View.All.class, View.PersonOfAllTheBookSmall.class,  View.LibraryCard.class})
     private Long id;
 
     @JsonView({View.Public.class, View.PersonOfAllTheBookSmall.class})
@@ -46,10 +46,10 @@ public class PersonDto {
     @Schema(pattern = "yyyy-MM-dd", example = "2020-02-20")
     private LocalDate dateOfBirth;
 
-    @JsonView(View.PersonOfAllTheBookSmall.class)
-    private Set<BookDto> books;
+    @JsonView({View.PersonOfAllTheBookSmall.class})
+    private Set<LibraryCardDto> booksDto;
 
-    @JsonView(View.Private.class)
+    @JsonView({View.Private.class,  View.LibraryCard.class})
     public String getFullName() {
         return firstName + " " + middleName + " " + lastName;
     }

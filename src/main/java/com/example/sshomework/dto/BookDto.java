@@ -2,9 +2,11 @@ package com.example.sshomework.dto;
 
 import com.example.sshomework.dto.genre.GenreDto;
 import com.example.sshomework.dto.view.View;
-import com.example.sshomework.entity.Person;
 import com.fasterxml.jackson.annotation.JsonView;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
@@ -21,11 +23,11 @@ import java.util.Set;
 public class BookDto {
 
     @JsonView({View.All.class, View.PersonOfAllTheBookSmall.class, View.BookPost.class,
-            View.UpdateBookGenres.class})
+            View.UpdateBookGenres.class, View.LibraryCard.class})
     private Long id;
 
     @JsonView({View.Public.class, View.AddAuthor.class, View.AuthorOfAllTheBook.class,
-            View.PersonOfAllTheBookSmall.class, View.Book.class})
+            View.PersonOfAllTheBookSmall.class, View.Book.class, View.LibraryCard.class})
     @NotBlank(message = "Пустое значение")
     @Size(max = 200)
     private String bookName;
@@ -39,5 +41,5 @@ public class BookDto {
     private Set<GenreDto> genres;
 
     @JsonView(View.All.class)
-    private Set<Person> persons;
+    private Set<LibraryCardDto> personsDto;
 }

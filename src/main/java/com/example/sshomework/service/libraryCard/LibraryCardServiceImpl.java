@@ -1,25 +1,69 @@
 package com.example.sshomework.service.libraryCard;
 
-import com.example.sshomework.dto.LibraryCard;
+import com.example.sshomework.dto.LibraryCardDto;
+import com.example.sshomework.entity.Book;
+import com.example.sshomework.entity.LibraryCard;
+import com.example.sshomework.entity.Person;
+import com.example.sshomework.mappers.LibraryCardMapper;
+import com.example.sshomework.repository.BookRepository;
+import com.example.sshomework.repository.LibraryCardRepository;
+import com.example.sshomework.repository.PersonRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
+import java.time.ZonedDateTime;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * @author Aleksey Romodin
  */
 @Service
+@RequiredArgsConstructor
 public class LibraryCardServiceImpl implements LibraryCardService {
-    private static final List<LibraryCard> libraryCards = new ArrayList<>();
+
+    private final LibraryCardMapper libraryCardMapper;
+    private final LibraryCardRepository libraryCardRepository;
+    private final BookRepository bookRepository;
+    private final PersonRepository personRepository;
 
     @Override
-    public List<LibraryCard> getAll(){
-        return libraryCards;
+    public List<LibraryCardDto> getDebtors() {
+        List<LibraryCard> libraryCards = libraryCardRepository.findAll();
+
+        return libraryCardMapper.toDtoList(
+                libraryCards.stream().filter(libraryCard -> (libraryCard.daysDept() > 0))
+                        .collect(Collectors.toList()));
     }
 
     @Override
-    public void addNewRecord(LibraryCard libraryCard) {
-        libraryCards.add(libraryCard);
+    public LibraryCardDto prolongation(Long personId, Long bookId, Long days) {
+        LibraryCard libraryCard = libraryCardRepository.findByBookIdAndPersonId(bookId, personId);
+        if ((libraryCard != null) & (days > 0)) {
+            ZonedDateTime dateReturn = libraryCard.getDateTimeReturn().plusDays(days);
+            libraryCard.setDateTimeReturn(dateReturn);
+            libraryCardRepository.save(libraryCard);
+            return libraryCardMapper.toDto(libraryCard);
+        }
+        return null;
     }
+
+    @Override
+    public LibraryCardDto addNewCard(Long personId, Long bookId) {
+        Person person = personRepository.findById(personId).orElse(null);
+        Book book = bookRepository.findById(bookId).orElse(null);
+
+        if ((person != null) & (book != null)) {
+            List<LibraryCard> libraryCards = libraryCardRepository.findByPersonId(personId);
+            if (libraryCards.stream().noneMatch(libraryCard -> libraryCard.daysDept() > 0)) {
+                LibraryCard addCard = new LibraryCard();
+                addCard.setBook(book);
+                addCard.setPerson(person);
+                libraryCardRepository.save(addCard);
+                return libraryCardMapper.toDto(addCard);
+            }
+        }
+        return null;
+    }
+
 }

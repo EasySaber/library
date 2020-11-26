@@ -1,0 +1,49 @@
+databaseChangeLog:
+  - changeSet:
+      id: 25-11-2020-001
+      author: Aleksey Romodin
+      comment: Add column for libraryCard
+      changes:
+        - addColumn:
+            tableName: library_card
+            columns:
+            - column:
+                name: id
+                type: BIGINT
+                autoIncrement: true
+                constraints:
+                  nullable: false
+            - column:
+                name: date_time_created
+                type: timestamptz
+            - column:
+                name: date_time_last_modified
+                type: timestamptz
+            - column:
+                name: date_time_return
+                type: timestamptz
+            - column:
+                name: version
+                type: BIGINT
+  - changeSet:
+        id: 25-11-2020-002
+        author: Aleksey Romodin
+        comment: Update primaryKey for libraryCard
+        changes:
+            - dropPrimaryKey:
+                  tableName: library_card
+            - addPrimaryKey:
+                  columnNames: id
+                  tableName: library_card
+  - changeSet:
+      id: 25-11-2020-003
+      author: Aleksey Romodin
+      comment: Update libraryCard.version
+      changes:
+        - sql: UPDATE library_card SET version = 0 WHERE version is null
+  - changeSet:
+      id: 25-11-2020-004
+      author: Aleksey Romodin
+      comment: Update libraryCard:date_time_return, date_time_created
+      changes:
+        - sql: UPDATE library_card SET date_time_created = NOW(), date_time_return = NOW() + INTERVAL '7 DAY' WHERE date_time_created is null

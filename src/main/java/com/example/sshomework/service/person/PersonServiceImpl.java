@@ -2,6 +2,7 @@ package com.example.sshomework.service.person;
 
 import com.example.sshomework.dto.PersonDto;
 import com.example.sshomework.entity.Book;
+import com.example.sshomework.entity.LibraryCard;
 import com.example.sshomework.entity.Person;
 import com.example.sshomework.mappers.PersonMapper;
 import com.example.sshomework.repository.BookRepository;
@@ -91,14 +92,17 @@ public class PersonServiceImpl implements PersonService {
     private PersonDto updateLibraryCard(Long personId, Long bookId, Boolean operation) {
         Person person = personRepository.findById(personId).orElse(null);
         Book bookIncoming = bookRepository.findById(bookId).orElse(null);
-        if (person != null & bookIncoming != null) {
-            Set<Book> bookSet = person.getBooks();
-            if (operation) { //Удаление книги
 
-                bookSet.removeIf(book -> (book.getId().equals(bookId)));
+        if (person != null & bookIncoming != null) {
+            Set<LibraryCard> libraryCards = person.getBooks();
+            if (operation) { //Удаление книги
+                libraryCards.removeIf(libraryCard -> (libraryCard.getBook().getId().equals(bookId)));
             } else {         //Добавление книги
-                bookSet.add(bookIncoming);
-                person.setBooks(bookSet);
+                LibraryCard newCard = new LibraryCard();
+                newCard.setBook(bookIncoming);
+                newCard.setPerson(person);
+                libraryCards.add(newCard);
+                person.setBooks(libraryCards);
             }
             personRepository.save(person);
             return personMapper.toDto(person);

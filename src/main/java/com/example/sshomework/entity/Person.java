@@ -44,9 +44,6 @@ public class Person extends MainEntity{
     private LocalDate dateOfBirth;
 
     @JsonView(View.PersonOfAllTheBookSmall.class)
-    @ManyToMany(fetch = FetchType.EAGER)
-    @JoinTable(name = "library_card",
-            joinColumns = @JoinColumn(name = "person_id"),
-            inverseJoinColumns = @JoinColumn(name = "book_id"))
-    private Set<Book> books;
+    @OneToMany(mappedBy = "person", fetch = FetchType.EAGER, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    private Set<LibraryCard> books;
 }

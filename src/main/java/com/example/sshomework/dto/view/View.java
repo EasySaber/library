@@ -61,6 +61,13 @@ public interface View {
 
     }
 
+    /**
+     * Карточка с полученной книгой
+     */
+    interface LibraryCard {
+
+    }
+
 
 
 }

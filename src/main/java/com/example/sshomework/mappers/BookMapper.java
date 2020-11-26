@@ -10,7 +10,7 @@ import java.util.List;
 /**
  * @author Aleksey Romodin
  */
-@Mapper
+@Mapper(componentModel = "spring")
 public interface BookMapper extends MapMapper<BookDto, Book> {
     @Mapping(source = "authorBookDto", target = "authorBook")
     Book toEntity(BookDto book);
@@ -18,6 +18,7 @@ public interface BookMapper extends MapMapper<BookDto, Book> {
 
     @Mapping(target = "authorBookDto", source = "authorBook")
     @Mapping(target = "authorBookDto.books", ignore = true)
+    @Mapping(target = "personsDto", ignore = true)
     BookDto toDto(Book book);
 
     @Mapping(source = "authorBook", target = "authorBookDto")
