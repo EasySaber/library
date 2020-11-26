@@ -1,4 +1,4 @@
-package com.example.sshomework.repository;
+package com.example.sshomework.repository.book;
 
 import com.example.sshomework.entity.Book;
 import org.springframework.data.jpa.repository.JpaRepository;

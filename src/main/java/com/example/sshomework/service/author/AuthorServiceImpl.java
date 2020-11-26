@@ -4,7 +4,7 @@ import com.example.sshomework.dto.AuthorDto;
 import com.example.sshomework.entity.Author;
 import com.example.sshomework.entity.Genre;
 import com.example.sshomework.mappers.AuthorMapper;
-import com.example.sshomework.repository.AuthorRepository;
+import com.example.sshomework.repository.author.AuthorRepository;
 import com.example.sshomework.repository.GenreRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;

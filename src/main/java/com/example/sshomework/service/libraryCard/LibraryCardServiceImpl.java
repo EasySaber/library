@@ -5,7 +5,7 @@ import com.example.sshomework.entity.Book;
 import com.example.sshomework.entity.LibraryCard;
 import com.example.sshomework.entity.Person;
 import com.example.sshomework.mappers.LibraryCardMapper;
-import com.example.sshomework.repository.BookRepository;
+import com.example.sshomework.repository.book.BookRepository;
 import com.example.sshomework.repository.LibraryCardRepository;
 import com.example.sshomework.repository.PersonRepository;
 import lombok.RequiredArgsConstructor;

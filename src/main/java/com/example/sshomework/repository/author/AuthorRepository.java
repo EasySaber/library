@@ -1,4 +1,4 @@
-package com.example.sshomework.repository;
+package com.example.sshomework.repository.author;
 
 import com.example.sshomework.entity.Author;
 import org.springframework.data.jpa.repository.JpaRepository;

@@ -1,0 +1,26 @@
+databaseChangeLog:
+  - changeSet:
+      id: 26-11-2020-001
+      author: Aleksey Romodin
+      comment: Add column for author
+      changes:
+        - addColumn:
+            tableName: author
+            columns:
+              - column:
+                  name: date_time_of_birth
+                  type: TIMESTAMP
+  - changeSet:
+      id: 26-11-2020-002
+      author: Aleksey Romodin
+      comment: Add column for book
+      changes:
+        - addColumn:
+            tableName: book
+            columns:
+              - column:
+                  name: date_delivery
+                  type: DATE
+              - column:
+                  name: date_publication
+                  type: DATE
