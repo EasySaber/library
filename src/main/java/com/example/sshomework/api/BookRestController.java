@@ -1,7 +1,10 @@
 package com.example.sshomework.api;
 
-import com.example.sshomework.dto.BookDto;
+import com.example.sshomework.dto.book.BookDto;
+import com.example.sshomework.dto.book.BookSearchRequest;
+import com.example.sshomework.dto.book.Sings;
 import com.example.sshomework.dto.view.View;
+import com.example.sshomework.entity.Book;
 import com.example.sshomework.service.book.BookService;
 import com.fasterxml.jackson.annotation.JsonView;
 import io.swagger.v3.oas.annotations.Operation;
@@ -16,6 +19,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
 
 /**
@@ -113,6 +117,37 @@ public class BookRestController {
                                           @RequestParam(name = "genres[]") List<Long> genres) {
         BookDto book = bookService.updateGenres(bookId, genres);
         return book != null ? ResponseEntity.ok(book) : ResponseEntity.notFound().build();
+    }
+
+    @JsonView(View.BookPost.class)
+    @Operation(description = "Поиск книг по параметрам")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Поиск успешен",
+                    content = {@Content(mediaType = "application/json",
+                            array = @ArraySchema(schema = @Schema(implementation = BookDto.class)))}),
+            @ApiResponse(responseCode = "400", description = "Ошибка в переданных данных"),
+            @ApiResponse(responseCode = "404", description = "Поиск не дал результатов", content = @Content)
+    })
+    @GetMapping("/getBookInParameter")
+    public ResponseEntity<?> getBookInParameter(
+            @Parameter(description = "Жанр")
+            @RequestParam(name = "genre", required = false) String genre,
+            @Parameter(description = "Год издания")
+            @RequestParam(name = "year", required = false) @Valid Integer yearPublication,
+            @Parameter(description = "Признак фильтра('>', '<', '=')")
+            @RequestParam(name = "sing", required = false) @Valid Sings sing)
+    {
+
+        if ((yearPublication != null) & (sing == null)) {
+            return ResponseEntity.badRequest().build();
+        }
+        BookSearchRequest request = BookSearchRequest.builder()
+                .genre(genre)
+                .yearPublication(yearPublication)
+                .sing(sing)
+                .build();
+        List<BookDto> books = bookService.getBookInParameters(request);
+        return books.isEmpty() ? ResponseEntity.notFound().build() : ResponseEntity.ok(books);
     }
 
 }

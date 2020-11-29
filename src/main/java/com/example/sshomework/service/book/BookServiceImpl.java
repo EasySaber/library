@@ -1,6 +1,7 @@
 package com.example.sshomework.service.book;
 
-import com.example.sshomework.dto.BookDto;
+import com.example.sshomework.dto.book.BookDto;
+import com.example.sshomework.dto.book.BookSearchRequest;
 import com.example.sshomework.entity.Author;
 import com.example.sshomework.entity.Book;
 import com.example.sshomework.entity.Genre;
@@ -128,5 +129,10 @@ public class BookServiceImpl implements BookService {
             }
         }
         return null;
+    }
+
+    @Override
+    public List<BookDto> getBookInParameters(BookSearchRequest request) {
+        return bookMapper.toDtoList(bookRepository.customFilter(request));
     }
 }

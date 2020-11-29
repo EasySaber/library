@@ -1,7 +1,9 @@
 package com.example.sshomework.api;
 
-import com.example.sshomework.dto.AuthorDto;
+import com.example.sshomework.dto.author.AuthorDto;
+import com.example.sshomework.dto.author.AuthorSearchRequest;
 import com.example.sshomework.dto.view.View;
+import com.example.sshomework.entity.Author;
 import com.example.sshomework.service.author.AuthorService;
 import com.fasterxml.jackson.annotation.JsonView;
 import io.swagger.v3.oas.annotations.Operation;
@@ -13,10 +15,12 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -102,6 +106,41 @@ public class AuthorRestController {
                                                   @Parameter(description = "Id автора") Long id) {
         return authorService.deleteAuthorById(id) ?
                 ResponseEntity.ok().build() : ResponseEntity.badRequest().build();
+    }
+
+
+    @JsonView(View.Private.class)
+    @Operation(description = "Поиск автора по параметрам")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Поиск выполнен",
+                    content = {@Content(mediaType = "application/json",
+                            array = @ArraySchema(schema = @Schema(implementation = Author.class)))}),
+            @ApiResponse(responseCode = "400", description = "Ошибка в переданных данных"),
+            @ApiResponse(responseCode = "404", description = "Поиск не дал результатов", content = @Content)
+    })
+    @GetMapping("/getAuthorInParameter")
+    public ResponseEntity<?> getAuthorInParameter(
+            @Parameter(description = "Имя автора")
+            @RequestParam(name = "firstName", required = false) String firstName,
+            @Parameter(description = "Отчество автора")
+            @RequestParam(name = "middleName", required = false) String middleName,
+            @Parameter(description = "Фамилия автора")
+            @RequestParam(name = "lastName", required = false) String lastName,
+            @Parameter(description = "Стартовая дата добавления")
+            @RequestParam(name = "starDateCreated", required = false)
+            @DateTimeFormat(pattern = "yyyy-MM-dd") @Valid LocalDate starDateCreated,
+            @Parameter(description = "Конечная дата добавления")
+            @RequestParam(name = "endDateCreated", required = false)
+            @DateTimeFormat(pattern = "yyyy-MM-dd") @Valid LocalDate endDateCreated)
+    {
+        AuthorSearchRequest request= AuthorSearchRequest.builder()
+                .firstName(firstName)
+                .middleName(middleName)
+                .lastName(lastName)
+                .starDateCreated(starDateCreated)
+                .endDateCreated(endDateCreated).build();
+        List<AuthorDto> authors = authorService.getAuthorInParameters(request);
+        return authors.isEmpty() ? ResponseEntity.notFound().build() : ResponseEntity.ok(authors);
     }
 
 }

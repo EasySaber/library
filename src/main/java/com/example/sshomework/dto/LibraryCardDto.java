@@ -1,5 +1,6 @@
 package com.example.sshomework.dto;
 
+import com.example.sshomework.dto.book.BookDto;
 import com.example.sshomework.dto.view.View;
 import com.fasterxml.jackson.annotation.JsonView;
 import lombok.AllArgsConstructor;

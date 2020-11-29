@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
+import java.time.LocalDate;
 import java.util.Set;
 
 /**
@@ -42,4 +43,8 @@ public class Author extends MainEntity{
     @JsonView(View.Public.class)
     @OneToMany(mappedBy = "authorBook", fetch = FetchType.EAGER, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     private Set<Book> books;
+
+    @JsonView({View.Public.class, View.Private.class, View.PersonOfAllTheBookSmall.class, View.BookPost.class})
+    @Column(name = "date_time_of_birth")
+    private LocalDate dateTimeOfBirth;
 }

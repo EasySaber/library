@@ -1,7 +1,11 @@
 package com.example.sshomework.service.author;
 
-import com.example.sshomework.dto.AuthorDto;
+import com.example.sshomework.dto.author.AuthorDto;
+import com.example.sshomework.dto.author.AuthorSearchRequest;
+import com.example.sshomework.entity.Author;
 
+import java.time.LocalDate;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -13,4 +17,5 @@ public interface AuthorService {
     List<AuthorDto> getAll();
     AuthorDto addNewAuthor(AuthorDto authorDto);
     Boolean deleteAuthorById(Long id);
+    List<AuthorDto> getAuthorInParameters(AuthorSearchRequest request);
 }

@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonView;
 import lombok.*;
 
 import javax.persistence.*;
+import java.time.LocalDate;
 import java.util.Set;
 
 /**
@@ -26,6 +27,10 @@ public class Book extends MainEntity{
     @JsonView({View.Public.class, View.PersonOfAllTheBookSmall.class, View.Book.class})
     @Column(name = "book_name")
     private String bookName;
+
+    @JsonView({View.Public.class, View.PersonOfAllTheBookSmall.class, View.Book.class})
+    @Column(name = "date_publication")
+    private LocalDate datePublication;
 
     @ManyToOne
     @JoinColumn(name = "author_id")

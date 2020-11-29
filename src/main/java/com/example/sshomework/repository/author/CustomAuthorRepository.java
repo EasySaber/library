@@ -1,12 +1,13 @@
 package com.example.sshomework.repository.author;
 
-import com.example.sshomework.dto.AuthorDto;
-import org.springframework.data.repository.NoRepositoryBean;
+import com.example.sshomework.dto.author.AuthorSearchRequest;
+import com.example.sshomework.entity.Author;
+
+import java.util.List;
 
 /**
  * @author Aleksey Romodin
  */
-@NoRepositoryBean
 public interface CustomAuthorRepository {
-    AuthorDto customFilter();
+    List<Author> customFilter(AuthorSearchRequest request);
 }

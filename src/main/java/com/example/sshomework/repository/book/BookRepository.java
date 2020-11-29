@@ -11,7 +11,7 @@ import java.util.List;
  * @author Aleksey Romodin
  */
 @Repository
-public interface BookRepository extends JpaRepository<Book, Long> , JpaSpecificationExecutor<Book> {
+public interface BookRepository extends JpaRepository<Book, Long> , JpaSpecificationExecutor<Book>, CustomBookRepository {
     List<Book> findBookByAuthorBookId(Long id);
     List<Book> findByAuthorBookId(Long id);
     //Последняя запись
