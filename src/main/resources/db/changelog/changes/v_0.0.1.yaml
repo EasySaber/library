@@ -1,0 +1,219 @@
+databaseChangeLog:
+  - changeSet:
+      id: 17-11-2020-001
+      author: Aleksey Romodin
+      comment: Create table person
+      changes:
+        - createTable:
+            tableName: person
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: first_name
+                  type: VARCHAR(64)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: middle_name
+                  type: VARCHAR(64)
+              - column:
+                  name: last_name
+                  type: VARCHAR(64)
+              - column:
+                  name: date_of_birth
+                  type: DATE
+  - changeSet:
+      id: 17-11-2020-002
+      author: Aleksey Romodin
+      comment: Create table author
+      changes:
+        - createTable:
+            tableName: author
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: first_name
+                  type: VARCHAR(64)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: middle_name
+                  type: VARCHAR(64)
+              - column:
+                  name: last_name
+                  type: VARCHAR(64)
+  - changeSet:
+      id: 17-11-2020-003
+      author: Aleksey Romodin
+      comment: Create table book
+      changes:
+        - createTable:
+            tableName: book
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: book_name
+                  type: VARCHAR(200)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: author_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+  - changeSet:
+      id: 17-11-2020-004
+      author: Aleksey Romodin
+      comment: Create table genre
+      changes:
+        - createTable:
+            tableName: genre
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  autoIncrement: true
+                  constraints:
+                    nullable: false
+                    primaryKey: true
+              - column:
+                  name: genre_name
+                  type: VARCHAR(64)
+                  constraints:
+                    unique: true
+                    nullable: false
+  - changeSet:
+      id: 17-11-2020-005
+      author: Aleksey Romodin
+      comment: Create table book_genre
+      changes:
+        - createTable:
+            tableName: book_genre
+            columns:
+              - column:
+                  name: book_id
+                  type: BIGINT
+                  constraints:
+                    nullble: false
+              - column:
+                  name: genre_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+  - changeSet:
+      id: 17-11-2020-006
+      author: Aleksey Romodin
+      comment: Create primaryKey for book_genre
+      changes:
+        - addPrimaryKey:
+            columnNames: book_id, genre_id
+            tableName: book_genre
+  - changeSet:
+      id: 17-11-2020-007
+      author: Aleksey Romodin
+      comment: Create table library_card
+      changes:
+        - createTable:
+            tableName: library_card
+            columns:
+              - column:
+                  name: book_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+              - column:
+                  name: person_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+  - changeSet:
+      id: 17-11-2020-008
+      author: Aleksey Romodin
+      comment: Create primaryKey for library_card
+      changes:
+        - addPrimaryKey:
+            columnNames: book_id, person_id
+            tableName: library_card
+  - changeSet:
+      id: 17-11-2020-009
+      author: Aleksey Romodin
+      comment: Add author to book relation
+      changes:
+      - addForeignKeyConstraint:
+          constraintName: fk_author_book
+          baseTableName: book
+          baseColumnNames: author_id
+          referencedTableName: author
+          referencedColumnNames: id
+          onDelete: 'CASCADE'
+          onUpdate: 'RESTRICT'
+  - changeSet:
+      id: 17-11-2020-010
+      author: Aleksey Romodin
+      comment: Add book to book_genre relation
+      changes:
+      - addForeignKeyConstraint:
+          constraintName: fk_book_book_genre
+          baseTableName: book_genre
+          baseColumnNames: book_id
+          referencedTableName: book
+          referencedColumnNames: id
+          onDelete: 'CASCADE'
+          onUpdate: 'RESTRICT'
+  - changeSet:
+      id: 17-11-2020-011
+      author: Aleksey Romodin
+      comment: Add genre to book_genre_lnk relation
+      changes:
+      - addForeignKeyConstraint:
+          constraintName: fk_genre_book_genre
+          baseTableName: book_genre
+          baseColumnNames: genre_id
+          referencedTableName: genre
+          referencedColumnNames: id
+          onDelete: 'CASCADE'
+          onUpdate: 'RESTRICT'
+  - changeSet:
+      id: 17-11-2020-012
+      author: Aleksey Romodin
+      comment: Add book to library_card relation
+      changes:
+        - addForeignKeyConstraint:
+            constraintName: fk_book_library_card
+            baseTableName: library_card
+            baseColumnNames: book_id
+            referencedTableName: book
+            referencedColumnNames: id
+            onDelete: 'CASCADE'
+            onUpdate: 'RESTRICT'
+  - changeSet:
+      id: 17-11-2020-013
+      author: Aleksey Romodin
+      comment: Add person to library_card relation
+      changes:
+        - addForeignKeyConstraint:
+            constraintName: fk_person_library_card
+            baseTableName: library_card
+            baseColumnNames: person_id
+            referencedTableName: person
+            referencedColumnNames: id
+            onDelete: 'CASCADE'
+            onUpdate: 'RESTRICT'

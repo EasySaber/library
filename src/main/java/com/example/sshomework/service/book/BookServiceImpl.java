@@ -1,53 +1,132 @@
 package com.example.sshomework.service.book;
 
-import com.example.sshomework.dto.Book;
+import com.example.sshomework.dto.BookDto;
+import com.example.sshomework.entity.Author;
+import com.example.sshomework.entity.Book;
+import com.example.sshomework.entity.Genre;
+import com.example.sshomework.mappers.BookMapper;
+import com.example.sshomework.repository.AuthorRepository;
+import com.example.sshomework.repository.BookRepository;
+import com.example.sshomework.repository.GenreRepository;
+import com.example.sshomework.specification.BookSpecification;
+import lombok.RequiredArgsConstructor;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
  * @author Aleksey Romodin
  */
 @Service
+@RequiredArgsConstructor
 public class BookServiceImpl implements BookService {
 
-    private static final List<Book> bookList = new ArrayList<>();
+    private final BookRepository bookRepository;
+    private final BookMapper bookMapper;
+    private final GenreRepository genreRepository;
+    private final AuthorRepository authorRepository;
 
-    static {
-        bookList.add(new Book("Мастер и Маргарита", "Михаил Булгаков", "роман"));
-        bookList.add(new Book("Анна Каренина", "Лев Толстой", "роман"));
-        bookList.add(new Book("Евгений Онегин", "Александр Пушкин", "роман"));
+    @Override
+    public BookDto addNewBook(BookDto bookDto) {
+
+        Book book = bookMapper.toEntity(bookDto);
+        Author author = authorRepository.findById(book.getAuthorBook().getId()).orElse(null);
+        if (author != null) {
+            book.setAuthorBook(author);
+            if (book.getGenres().isEmpty()) {
+                return null;
+            } else {
+                Set<Genre> addGenres = new HashSet<>();
+                book.getGenres().forEach(genre ->
+                        genreRepository.findById(genre.getId()).ifPresent(addGenres::add));
+
+                if (!addGenres.isEmpty()) {
+                    addGenres.forEach(genre -> genre.getBooks().add(book));
+                    book.getGenres().clear();
+                    book.setGenres(addGenres);
+
+                } else {
+                    return null;
+                }
+            }
+            bookRepository.save(book);
+            return bookMapper.toDto(bookRepository.findFirstByOrderByIdDesc());
+        }
+        return null;
     }
 
     @Override
-    public List<Book> getAll() {
-        return bookList;
+    public Boolean deleteBookById(Long id) {
+        Optional<Book> book = bookRepository.findById(id);
+        if (book.isPresent()) {
+            if (book.get().getPersons().isEmpty()) {
+                bookRepository.deleteById(id);
+                return true;
+            }
+        }
+        return false;
     }
 
     @Override
-    public List<Book> findByAuthor(String author) {
-        return bookList.stream()
-                .filter(book -> book.getAuthor()
-                .equals(author)).collect(Collectors.toList());
+    public List<BookDto> getByGenre(Long id) {
+        return bookMapper.toDtoList(bookRepository.findAll().stream()
+                .filter(book -> book.getGenres().stream().anyMatch(genre -> genre.getId().equals(id)))
+                .collect(Collectors.toList()));
     }
 
     @Override
-    public void addNewBook(Book book) {
-        bookList.add(book);
+    public List<BookDto> getByAuthorFilter(String firstName, String middleName, String lastName) {
+
+        Specification<Book> specification = null;
+
+        // Формируем условия для запроса
+        if (firstName != null) {
+            specification = draftSpecification(null, "firstName", firstName);
+        }
+        if (middleName != null) {
+            specification = draftSpecification(specification, "middleName", middleName);
+        }
+        if (lastName != null) {
+            specification = draftSpecification(specification, "lastName", lastName);
+        }
+        return bookMapper.toDtoList(bookRepository.findAll(specification));
+    }
+
+    private Specification<Book> draftSpecification(
+            Specification<Book> specification, String columnName, String optionalName)
+    {
+        if (optionalName != null) {
+            if (specification == null) {
+                specification = Specification.where(new BookSpecification(columnName, optionalName));
+            } else {
+                specification = specification.and(new BookSpecification(columnName, optionalName));
+            }
+        }
+        return specification;
     }
 
     @Override
-    public void deleteBook(String author, String name) {
-            bookList.removeIf(searchBook ->
-                    searchBook.getAuthor().equals(author) & searchBook.getName().equals(name));
-    }
+    public BookDto updateGenres(Long id, List<Long> genres){
 
-    @Override
-    public List<Book> findByAuthorByName(String author, String name) {
-        return bookList.stream()
-                .filter(book -> book.getAuthor().equals(author) & book.getName().equals(name))
-                .collect(Collectors.toList());
+        Optional<Book> book = bookRepository.findById(id);
+        if (book.isPresent() & !genres.isEmpty()) {
+            Set<Genre> genreSet = new HashSet<>();
+            for (Long genreId : genres) {
+                Optional<Genre> genre = genreRepository.findById(genreId);
+                genre.ifPresent(genreSet::add);
+            }
+            if (genreSet.size() > 0) {
+                book.get().getGenres().clear();
+                book.get().setGenres(genreSet);
+                bookRepository.save(book.get());
+                return bookMapper.toDto(book.get());
+            }
+        }
+        return null;
     }
 }

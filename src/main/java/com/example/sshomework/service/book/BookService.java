@@ -1,6 +1,6 @@
 package com.example.sshomework.service.book;
 
-import com.example.sshomework.dto.Book;
+import com.example.sshomework.dto.BookDto;
 
 import java.util.List;
 
@@ -8,9 +8,9 @@ import java.util.List;
  * @author Aleksey Romodin
  */
 public interface BookService {
-    List<Book> getAll();
-    List<Book> findByAuthor(String author);
-    List<Book> findByAuthorByName(String author, String name);
-    void addNewBook(Book book);
-    void deleteBook(String author, String name);
+    BookDto addNewBook(BookDto bookDto);
+    Boolean deleteBookById(Long id);
+    List<BookDto> getByGenre(Long id);
+    List<BookDto> getByAuthorFilter(String firstName, String middleName, String lastName);
+    BookDto updateGenres(Long id, List<Long> genres);
 }

@@ -1,0 +1,93 @@
+databaseChangeLog:
+  - changeSet:
+      id: 23-11-2020-001
+      author: Aleksey Romodin
+      comment: Add column for person
+      changes:
+        - addColumn:
+            tableName: person
+            columns:
+            - column:
+                name: date_time_created
+                type: timestamptz
+            - column:
+                name: date_time_last_modified
+                type: timestamptz
+            - column:
+                name: version
+                type: BIGINT
+  - changeSet:
+      id: 23-11-2020-002
+      author: Aleksey Romodin
+      comment: Add column for genre
+      changes:
+        - addColumn:
+            tableName: genre
+            columns:
+              - column:
+                  name: date_time_created
+                  type: timestamptz
+              - column:
+                  name: date_time_last_modified
+                  type: timestamptz
+              - column:
+                  name: version
+                  type: BIGINT
+  - changeSet:
+      id: 23-11-2020-003
+      author: Aleksey Romodin
+      comment: Add column for author
+      changes:
+        - addColumn:
+            tableName: author
+            columns:
+              - column:
+                  name: date_time_created
+                  type: timestamptz
+              - column:
+                  name: date_time_last_modified
+                  type: timestamptz
+              - column:
+                  name: version
+                  type: BIGINT
+  - changeSet:
+      id: 23-11-2020-004
+      author: Aleksey Romodin
+      comment: Add column for book
+      changes:
+        - addColumn:
+            tableName: book
+            columns:
+              - column:
+                  name: date_time_created
+                  type: timestamptz
+              - column:
+                  name: date_time_last_modified
+                  type: timestamptz
+              - column:
+                  name: version
+                  type: BIGINT
+  - changeSet:
+      id: 23-11-2020-005
+      comment: Update author.version
+      author: Aleksey Romodin
+      changes:
+        - sql: UPDATE author SET version = 0 WHERE version is null
+  - changeSet:
+      id: 23-11-2020-006
+      comment: Update person.version
+      author: Aleksey Romodin
+      changes:
+        - sql: UPDATE person SET version = 0 WHERE version is null
+  - changeSet:
+      id: 23-11-2020-007
+      comment: Update book.version
+      author: Aleksey Romodin
+      changes:
+        - sql: UPDATE book SET version = 0 WHERE version is null
+  - changeSet:
+      id: 23-11-2020-008
+      comment: Update genre.version
+      author: Aleksey Romodin
+      changes:
+        - sql: UPDATE genre SET version = 0 WHERE version is null

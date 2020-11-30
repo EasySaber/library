@@ -1,0 +1,103 @@
+databaseChangeLog:
+  - changeSet:
+      id: 18-11-2020-001
+      comment: Insert default person
+      author: Aleksey Romodin
+      preConditions:
+        - onFail: MARK_RAN
+        - sqlCheck:
+            expectedResult: 0
+            sql: select count(*) from person;
+      changes:
+        - sqlFile:
+            dbms: 'postgresql'
+            encoding: UTF-8
+            path: db/changelog/default-values/person.sql
+            relativeToChangelogFile: false
+            splitStatements: true
+            stripComments: true
+  - changeSet:
+      id: 18-11-2020-002
+      comment: Insert default author
+      author: Aleksey Romodin
+      preConditions:
+        - onFail: MARK_RAN
+        - sqlCheck:
+            expectedResult: 0
+            sql: select count(*) from author;
+      changes:
+        - sqlFile:
+            dbms: 'postgresql'
+            encoding: UTF-8
+            path: db/changelog/default-values/author.sql
+            relativeToChangelogFile: false
+            splitStatements: true
+            stripComments: true
+  - changeSet:
+      id: 18-11-2020-003
+      comment: Insert default genre
+      author: Aleksey Romodin
+      preConditions:
+        - onFail: MARK_RAN
+        - sqlCheck:
+            expectedResult: 0
+            sql: select count(*) from genre;
+      changes:
+        - sqlFile:
+            dbms: 'postgresql'
+            encoding: UTF-8
+            path: db/changelog/default-values/genre.sql
+            relativeToChangelogFile: false
+            splitStatements: true
+            stripComments: true
+  - changeSet:
+      id: 18-11-2020-004
+      comment: Insert default book
+      author: Aleksey Romodin
+      preConditions:
+        - onFail: MARK_RAN
+        - sqlCheck:
+            expectedResult: 0
+            sql: select count(*) from book;
+      changes:
+        - sqlFile:
+            dbms: 'postgresql'
+            encoding: UTF-8
+            path: db/changelog/default-values/book.sql
+            relativeToChangelogFile: false
+            splitStatements: true
+            stripComments: true
+  - changeSet:
+      id: 18-11-2020-005
+      comment: Insert default book
+      author: Aleksey Romodin
+      preConditions:
+        - onFail: MARK_RAN
+        - sqlCheck:
+            expectedResult: 0
+            sql: select count(*) from book_genre;
+      changes:
+        - sqlFile:
+            dbms: 'postgresql'
+            encoding: UTF-8
+            path: db/changelog/default-values/book_genre.sql
+            relativeToChangelogFile: false
+            splitStatements: true
+            stripComments: true
+  - changeSet:
+      id: 18-11-2020-006
+      comment: Insert default library_card
+      author: Aleksey Romodin
+      preConditions:
+        - onFail: MARK_RAN
+        - sqlCheck:
+            expectedResult: 0
+            sql: select count(*) from library_card;
+      changes:
+        - sqlFile:
+            dbms: 'postgresql'
+            encoding: UTF-8
+            path: db/changelog/default-values/library_card.sql
+            relativeToChangelogFile: false
+            splitStatements: true
+            stripComments: true
