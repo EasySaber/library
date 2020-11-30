@@ -93,7 +93,7 @@ public class PersonServiceImpl implements PersonService {
         Person person = personRepository.findById(personId).orElse(null);
         Book bookIncoming = bookRepository.findById(bookId).orElse(null);
 
-        if (person != null & bookIncoming != null) {
+        if (person != null && bookIncoming != null) {
             Set<LibraryCard> libraryCards = person.getBooks();
             if (operation) { //Удаление книги
                 libraryCards.removeIf(libraryCard -> (libraryCard.getBook().getId().equals(bookId)));

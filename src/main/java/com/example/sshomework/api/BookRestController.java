@@ -1,26 +1,19 @@
 package com.example.sshomework.api;
 
-import com.example.sshomework.dto.book.BookDto;
-import com.example.sshomework.dto.book.BookSearchRequest;
-import com.example.sshomework.dto.book.Sings;
-import com.example.sshomework.dto.view.View;
-import com.example.sshomework.entity.Book;
-import com.example.sshomework.service.book.BookService;
-import com.fasterxml.jackson.annotation.JsonView;
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.media.ArraySchema;
-import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.media.Schema;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.responses.ApiResponses;
-import io.swagger.v3.oas.annotations.tags.Tag;
-import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
+import com.example.sshomework.dto.book.*;
+import com.example.sshomework.dto.view.*;
+import com.example.sshomework.service.book.*;
+import com.fasterxml.jackson.annotation.*;
+import io.swagger.v3.oas.annotations.*;
+import io.swagger.v3.oas.annotations.media.*;
+import io.swagger.v3.oas.annotations.responses.*;
+import io.swagger.v3.oas.annotations.tags.*;
+import lombok.*;
+import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
 
-import javax.validation.Valid;
-import java.util.List;
+import javax.validation.*;
+import java.util.*;
 
 /**
  * @author Aleksey Romodin

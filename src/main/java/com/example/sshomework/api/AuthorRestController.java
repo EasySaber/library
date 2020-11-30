@@ -45,7 +45,7 @@ public class AuthorRestController {
     })
     @GetMapping("/getById")
     public ResponseEntity<?> getAuthorById(@RequestParam(name = "id")
-                                               @Parameter(description = "Id автора") Long id) {
+                                           @Parameter(description = "Id автора") Long id) {
         Optional<AuthorDto> author = authorService.getAuthorById(id);
         return !author.isPresent() ? ResponseEntity.notFound().build() : ResponseEntity.ok(author.get());
 
@@ -89,8 +89,8 @@ public class AuthorRestController {
     })
     @PostMapping("/add")
     public ResponseEntity<?> addNewAuthor(@JsonView(View.AddAuthor.class)
-                                              @Parameter(description = "Новый автор")
-                                              @Valid @RequestBody AuthorDto authorDto) {
+                                          @Parameter(description = "Новый автор")
+                                          @Valid @RequestBody AuthorDto authorDto) {
         return ResponseEntity.ok(authorService.addNewAuthor(authorDto));
     }
 
@@ -103,7 +103,7 @@ public class AuthorRestController {
     })
     @DeleteMapping("/delete")
     public ResponseEntity<Void> deleteAuthorById(@RequestParam(name = "id")
-                                                  @Parameter(description = "Id автора") Long id) {
+                                                 @Parameter(description = "Id автора") Long id) {
         return authorService.deleteAuthorById(id) ?
                 ResponseEntity.ok().build() : ResponseEntity.badRequest().build();
     }
@@ -131,9 +131,8 @@ public class AuthorRestController {
             @DateTimeFormat(pattern = "yyyy-MM-dd") @Valid LocalDate starDateCreated,
             @Parameter(description = "Конечная дата добавления")
             @RequestParam(name = "endDateCreated", required = false)
-            @DateTimeFormat(pattern = "yyyy-MM-dd") @Valid LocalDate endDateCreated)
-    {
-        AuthorSearchRequest request= AuthorSearchRequest.builder()
+            @DateTimeFormat(pattern = "yyyy-MM-dd") @Valid LocalDate endDateCreated) {
+        AuthorSearchRequest request = AuthorSearchRequest.builder()
                 .firstName(firstName)
                 .middleName(middleName)
                 .lastName(lastName)

@@ -1,0 +1,50 @@
+package com.example.sshomework.api;
+
+import com.example.sshomework.dto.UserDto;
+import com.example.sshomework.dto.view.View;
+import com.example.sshomework.service.user.UserService;
+import com.fasterxml.jackson.annotation.JsonView;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import javax.validation.Valid;
+
+/**
+ * @author Aleksey Romodin
+ */
+@RestController
+@RequiredArgsConstructor
+@RequestMapping(value = "api/user")
+@Tag(name = "User", description = "User API")
+public class UserRestController {
+
+    private final UserService userService;
+
+    @JsonView(View.Public.class)
+    @Operation(description = "Добавление нового пользователя")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Запись добавлена",
+                    content = {@Content(mediaType = "application/json",
+                            schema = @Schema(implementation = UserDto.class))}),
+            @ApiResponse(responseCode = "400", description = "Ошибка в переданных данных", content = @Content)
+    })
+    @PostMapping("/add")
+    public ResponseEntity<Void> addNewUser(
+            @Parameter(description = "Новый пользователь")
+            @Valid @RequestBody UserDto user)
+    {
+        return userService.addNewUser(user) ? ResponseEntity.ok().build() : ResponseEntity.badRequest().build();
+    }
+
+}
