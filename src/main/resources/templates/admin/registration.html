@@ -1,0 +1,27 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+    <title>Список книг библиотеки</title>
+</head>
+<body>
+<header>
+    <a th:href="@{/}">На главную</a>
+    <a th:href="@{/admin}">Список пользователей</a>
+</header>
+<br>
+<h3>Добавить нового пользователя:</h3>
+<div>
+    <form th:action="@{/admin/registration}" th:object="${newUser}" method="POST">
+        <div><b>Username:</b></div>
+        <input type="text" name="name" th:field="*{username}" />
+        <div th:if="${#fields.hasErrors('username')}" th:errors="*{username}">Error...</div>
+        <div><b>Password:</b></div>
+        <input type="password" name="pass" th:field="*{password}" />
+        <div th:if="${#fields.hasErrors('password')}" th:errors="*{password}">Error...</div><br><br>
+        <div><input type="submit" value="Добавить" /></div>
+    </form>
+</div>
+</div>
+</body>
+</html>

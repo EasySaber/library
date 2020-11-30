@@ -2,6 +2,7 @@ package com.example.sshomework.service.book;
 
 import com.example.sshomework.dto.book.BookDto;
 import com.example.sshomework.dto.book.BookSearchRequest;
+import com.example.sshomework.dto.book.BookStatusDto;
 
 import java.util.List;
 
@@ -15,4 +16,5 @@ public interface BookService {
     List<BookDto> getByAuthorFilter(String firstName, String middleName, String lastName);
     BookDto updateGenres(Long id, List<Long> genres);
     List<BookDto> getBookInParameters(BookSearchRequest request);
+    List<BookStatusDto> getBooks();
 }

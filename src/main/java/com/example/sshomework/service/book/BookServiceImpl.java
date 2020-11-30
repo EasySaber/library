@@ -2,10 +2,12 @@ package com.example.sshomework.service.book;
 
 import com.example.sshomework.dto.book.BookDto;
 import com.example.sshomework.dto.book.BookSearchRequest;
+import com.example.sshomework.dto.book.BookStatusDto;
 import com.example.sshomework.entity.Author;
 import com.example.sshomework.entity.Book;
 import com.example.sshomework.entity.Genre;
-import com.example.sshomework.mappers.BookMapper;
+import com.example.sshomework.mappers.Book.BookMapper;
+import com.example.sshomework.mappers.Book.BookStatusMapper;
 import com.example.sshomework.repository.author.AuthorRepository;
 import com.example.sshomework.repository.book.BookRepository;
 import com.example.sshomework.repository.GenreRepository;
@@ -31,6 +33,7 @@ public class BookServiceImpl implements BookService {
     private final BookMapper bookMapper;
     private final GenreRepository genreRepository;
     private final AuthorRepository authorRepository;
+    private final BookStatusMapper bookStatusMapper;
 
     @Override
     public BookDto addNewBook(BookDto bookDto) {
@@ -134,5 +137,10 @@ public class BookServiceImpl implements BookService {
     @Override
     public List<BookDto> getBookInParameters(BookSearchRequest request) {
         return bookMapper.toDtoList(bookRepository.customFilter(request));
+    }
+
+    @Override
+    public List<BookStatusDto> getBooks() {
+        return bookStatusMapper.toDtoList(bookRepository.findAll());
     }
 }

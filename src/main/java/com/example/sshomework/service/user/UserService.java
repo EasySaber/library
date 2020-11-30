@@ -10,6 +10,8 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 /**
  * @author Aleksey Romodin
  */
@@ -20,12 +22,20 @@ public class UserService implements UserDetailsService{
     private final UserRepository userRepository;
     private final UserMapper userMapper;
 
+    public List<UserDto> getAll() {
+        return userMapper.toDtoList(userRepository.findAll());
+    }
+
     public boolean addNewUser(UserDto user) {
-        if (userRepository.findByUsername(user.getUsername()) == null) {
+        if (userUnique(user.getUsername())) {
             userRepository.save(userMapper.toEntity(user));
             return true;
         }
         return false;
+    }
+
+    public boolean userUnique(String userName) {
+        return userRepository.findByUsername(userName) == null;
     }
 
     @Override

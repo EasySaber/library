@@ -1,7 +1,8 @@
-package com.example.sshomework.mappers;
+package com.example.sshomework.mappers.Book;
 
 import com.example.sshomework.dto.book.BookDto;
 import com.example.sshomework.entity.Book;
+import com.example.sshomework.mappers.MapMapper;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
@@ -23,6 +24,5 @@ public interface BookMapper extends MapMapper<BookDto, Book> {
 
     @Mapping(source = "authorBook", target = "authorBookDto")
     List<BookDto> toDtoList(List<Book> books);
-
 }
 

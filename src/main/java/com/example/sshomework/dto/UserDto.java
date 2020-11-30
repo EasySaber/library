@@ -1,10 +1,14 @@
 package com.example.sshomework.dto;
 
-import com.example.sshomework.dto.view.*;
-import com.fasterxml.jackson.annotation.*;
-import lombok.*;
+import com.example.sshomework.dto.view.View;
+import com.fasterxml.jackson.annotation.JsonView;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
-import javax.validation.constraints.*;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Size;
 
 /**
  * @author Aleksey Romodin
