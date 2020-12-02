@@ -1,5 +1,6 @@
 package com.example.sshomework.entity;
 
+import com.example.sshomework.dto.user.RolesUser;
 import lombok.*;
 import org.springframework.security.crypto.bcrypt.*;
 
@@ -27,6 +28,10 @@ public class User {
 
     @Column(name = "password")
     private String password;
+
+    @Column(name = "role")
+    @Enumerated(EnumType.STRING)
+    private RolesUser role;
 
     public void setPassword(String password) {
         this.password = PASSWORD_ENCODER.encode(password);

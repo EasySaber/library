@@ -1,13 +1,14 @@
 <!DOCTYPE HTML>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.w3.org/1999/xhtml">
 <head>
-    <meta charset="UTF-8" />
+    <meta charset="UTF-8"/>
     <title>Список книг библиотеки</title>
 </head>
 <body>
 <header>
-    <a th:href="@{/}">На главную</a>
-    <a th:href="@{/admin/registration}">Добавить нового пользователя</a>
+    <a th:href="@{/}">На главную</a>&emsp;
+    <a th:href="@{/admin/registration}">Добавить нового пользователя</a>&emsp;
+    <a th:href="@{/logout}">Выйти "<span sec:authentication="name"></span>"</a>
 </header>
 <br>
 <h3>Список пользователей:</h3>
@@ -16,10 +17,12 @@
         <tr>
             <th>№</th>
             <th>Username</th>
+            <th>ROLE</th>
         </tr>
         <tr th:each ="user : ${users}">
             <td th:text="${user.id}">...</td>
             <td th:text="${user.username}">...</td>
+            <td th:text="${user.role}"></td>
         </tr>
     </table>
 

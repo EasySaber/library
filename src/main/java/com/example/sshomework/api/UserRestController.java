@@ -1,6 +1,6 @@
 package com.example.sshomework.api;
 
-import com.example.sshomework.dto.UserDto;
+import com.example.sshomework.dto.user.UserDto;
 import com.example.sshomework.dto.view.View;
 import com.example.sshomework.service.user.UserService;
 import com.fasterxml.jackson.annotation.JsonView;
@@ -13,6 +13,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -31,6 +32,7 @@ public class UserRestController {
 
     private final UserService userService;
 
+    @PreAuthorize("hasRole('ADMIN')")
     @JsonView(View.Public.class)
     @Operation(description = "Добавление нового пользователя")
     @ApiResponses(value = {
@@ -42,8 +44,7 @@ public class UserRestController {
     @PostMapping("/add")
     public ResponseEntity<Void> addNewUser(
             @Parameter(description = "Новый пользователь")
-            @Valid @RequestBody UserDto user)
-    {
+            @Valid @RequestBody UserDto user) {
         return userService.addNewUser(user) ? ResponseEntity.ok().build() : ResponseEntity.badRequest().build();
     }
 

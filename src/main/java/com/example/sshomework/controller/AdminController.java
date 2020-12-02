@@ -1,12 +1,11 @@
 package com.example.sshomework.controller;
 
-import com.example.sshomework.dto.UserDto;
+import com.example.sshomework.dto.user.UserDto;
 import com.example.sshomework.service.user.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -14,7 +13,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 import javax.validation.Valid;
 import java.util.List;
-import java.util.Objects;
 
 /**
  * @author Aleksey Romodin
@@ -22,7 +20,7 @@ import java.util.Objects;
 @Controller
 @RequestMapping(value = "/admin")
 @RequiredArgsConstructor
-public class UserController {
+public class AdminController {
 
     private final UserService userService;
 
@@ -54,6 +52,7 @@ public class UserController {
             validResult.rejectValue("username", "badUniqueUser");
             return "admin/registration";
         }
+        System.out.println();
         userService.addNewUser(user);
         return "redirect:/admin/";
     }

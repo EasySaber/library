@@ -1,6 +1,6 @@
 package com.example.sshomework.mappers;
 
-import com.example.sshomework.dto.UserDto;
+import com.example.sshomework.dto.user.UserDto;
 import com.example.sshomework.entity.User;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;

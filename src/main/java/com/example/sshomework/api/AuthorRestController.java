@@ -17,6 +17,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -35,6 +36,7 @@ public class AuthorRestController {
 
     private final AuthorService authorService;
 
+    @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
     @JsonView(View.Private.class)
     @Operation(description = "Поиск автора по ID")
     @ApiResponses(value = {
@@ -51,6 +53,7 @@ public class AuthorRestController {
 
     }
 
+    @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
     @JsonView(View.Public.class)
     @Operation(description = "Показать всех авторов")
     @ApiResponses(value = {
@@ -65,6 +68,7 @@ public class AuthorRestController {
         return authorDtoList.isEmpty() ? ResponseEntity.notFound().build() : ResponseEntity.ok(authorDtoList);
     }
 
+    @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
     @JsonView(View.Public.class)
     @Operation(description = "Показать список книг автора: автор, книги, жанры.")
     @ApiResponses(value = {
@@ -79,6 +83,7 @@ public class AuthorRestController {
         return authorDtoList.isEmpty() ? ResponseEntity.notFound().build() : ResponseEntity.ok(authorDtoList);
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @JsonView(View.AuthorOfAllTheBook.class)
     @Operation(description = "Добавление нового автора.")
     @ApiResponses(value = {
@@ -94,6 +99,7 @@ public class AuthorRestController {
         return ResponseEntity.ok(authorService.addNewAuthor(authorDto));
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @Operation(description = "Удаление автора по id.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Запись удалена", content = @Content),
@@ -108,7 +114,7 @@ public class AuthorRestController {
                 ResponseEntity.ok().build() : ResponseEntity.badRequest().build();
     }
 
-
+    @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
     @JsonView(View.Private.class)
     @Operation(description = "Поиск автора по параметрам")
     @ApiResponses(value = {

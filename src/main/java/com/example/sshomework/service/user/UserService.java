@@ -1,6 +1,6 @@
 package com.example.sshomework.service.user;
 
-import com.example.sshomework.dto.UserDto;
+import com.example.sshomework.dto.user.UserDto;
 import com.example.sshomework.entity.User;
 import com.example.sshomework.mappers.UserMapper;
 import com.example.sshomework.repository.UserRepository;
@@ -48,7 +48,7 @@ public class UserService implements UserDetailsService{
         return org.springframework.security.core.userdetails.User.builder()
                 .username(user.getUsername())
                 .password(user.getPassword())
-                .authorities("USER")
+                .roles(user.getRole().toString())
                 .build();
     }
 }

@@ -15,7 +15,10 @@ import java.util.List;
 public interface PersonRepository extends JpaRepository<Person, Long> {
     //Последняя запись
     Person findFirstByOrderByIdDesc();
+
     //Поиск совпадений по ФИО
     List<Person> findByFirstNameAndMiddleNameAndLastName(String firstName, String middleName, String lastName);
 
+    //Поиск по аккаунту
+    Person findByAccount_Username(String username);
 }

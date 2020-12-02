@@ -10,11 +10,20 @@ import java.util.Optional;
  */
 public interface PersonService {
     Boolean deletePersonsByFullName(String firstName, String middleName, String lastName);
+
     PersonDto addNewPerson(PersonDto personDto);
+
     Optional<PersonDto> updatePerson(PersonDto personDto);
+
     Boolean deletePersonById(Long id);
+
     List<PersonDto> getAll();
+
     PersonDto getBooksByAuthorId(Long id);
+
     PersonDto addNewPostLibraryCard(Long personId, Long bookId);
+
     PersonDto deletePostLibraryCard(Long personId, Long bookId);
+
+    PersonDto getListUserBooks();
 }

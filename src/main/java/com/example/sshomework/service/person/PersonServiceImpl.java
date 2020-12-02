@@ -5,9 +5,12 @@ import com.example.sshomework.entity.Book;
 import com.example.sshomework.entity.LibraryCard;
 import com.example.sshomework.entity.Person;
 import com.example.sshomework.mappers.PersonMapper;
-import com.example.sshomework.repository.book.BookRepository;
 import com.example.sshomework.repository.PersonRepository;
+import com.example.sshomework.repository.book.BookRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -86,7 +89,15 @@ public class PersonServiceImpl implements PersonService {
 
     @Override
     public PersonDto deletePostLibraryCard(Long personId, Long bookId) {
-        return  updateLibraryCard(personId, bookId, true);
+        return updateLibraryCard(personId, bookId, true);
+    }
+
+    @Override
+    public PersonDto getListUserBooks() {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        UserDetails user = (UserDetails) auth.getPrincipal();
+        Person person = personRepository.findByAccount_Username(user.getUsername());
+        return personMapper.toDto(person);
     }
 
     private PersonDto updateLibraryCard(Long personId, Long bookId, Boolean operation) {
@@ -109,4 +120,5 @@ public class PersonServiceImpl implements PersonService {
         }
         return null;
     }
+
 }

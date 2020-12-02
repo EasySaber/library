@@ -14,6 +14,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -29,6 +30,7 @@ public class LibraryCardRestController {
 
     private final LibraryCardService libraryCardService;
 
+    @PreAuthorize("hasRole('ADMIN')")
     @JsonView(View.LibraryCard.class)
     @Operation(description = "Показать всех задолжников")
     @ApiResponses(value = {
@@ -43,6 +45,7 @@ public class LibraryCardRestController {
         return libraryCards.isEmpty() ? ResponseEntity.notFound().build() : ResponseEntity.ok(libraryCards);
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @JsonView(View.LibraryCard.class)
     @Operation(description = "Продление сроков")
     @ApiResponses(value = {
@@ -53,15 +56,16 @@ public class LibraryCardRestController {
     })
     @PutMapping("/prolongation")
     public ResponseEntity<?> prolongation(@Parameter(description = "Id пользователя")
-                                              @RequestParam(name = "personId") Long personId,
+                                          @RequestParam(name = "personId") Long personId,
                                           @Parameter(description = "Id книги")
                                           @RequestParam(name = "bookId") Long bookId,
                                           @Parameter(description = "Количество дней")
-                                              @RequestParam(name = "days") Long days) {
+                                          @RequestParam(name = "days") Long days) {
         LibraryCardDto libraryCardDto = libraryCardService.prolongation(personId, bookId, days);
         return libraryCardDto == null ? ResponseEntity.notFound().build() : ResponseEntity.ok(libraryCardDto);
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @JsonView(View.LibraryCard.class)
     @Operation(description = "Получение новой книги")
     @ApiResponses(value = {
@@ -72,7 +76,7 @@ public class LibraryCardRestController {
     })
     @PostMapping("/add")
     public ResponseEntity<?> addNewCard(@Parameter(description = "Id пользователя")
-                                            @RequestParam(name = "personId") Long personId,
+                                        @RequestParam(name = "personId") Long personId,
                                         @Parameter(description = "Id книги")
                                         @RequestParam(name = "bookId") Long bookId) {
         LibraryCardDto libraryCardDto = libraryCardService.addNewCard(personId, bookId);

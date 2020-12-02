@@ -46,4 +46,9 @@ public class Person extends MainEntity{
     @JsonView(View.PersonOfAllTheBookSmall.class)
     @OneToMany(mappedBy = "person", fetch = FetchType.EAGER, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     private Set<LibraryCard> books;
+
+    @JsonView(View.Private.class)
+    @OneToOne
+    @JoinColumn(name = "account_id")
+    private User account;
 }
