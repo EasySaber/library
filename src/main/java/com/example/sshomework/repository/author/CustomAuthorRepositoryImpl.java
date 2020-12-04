@@ -2,9 +2,9 @@ package com.example.sshomework.repository.author;
 
 import com.example.sshomework.dto.author.AuthorSearchRequest;
 import com.example.sshomework.entity.Author;
-import lombok.RequiredArgsConstructor;
 
 import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
@@ -16,11 +16,10 @@ import java.util.List;
 /**
  * @author Aleksey Romodin
  */
-
-@RequiredArgsConstructor
 public class CustomAuthorRepositoryImpl implements CustomAuthorRepository {
 
-    private final EntityManager entityManager;
+    @PersistenceContext
+    EntityManager entityManager;
 
     @Override
     public List<Author> customFilter(AuthorSearchRequest request) {

@@ -11,28 +11,28 @@
     </div>
     <a th:href="@{/login}" sec:authorize="not isAuthenticated()">Войти</a>
 </header>
-<div sec:authorize="hasRole('USER')">
+<div sec:authorize="hasRole('USER')" th:if="${person.isPresent()}">
     <h2>Пользователь:</h2>
     <div>
         <div>
-            <span><b>Id:</b></span><span th:text="${person.id}"></span>
+            <span><b>Id:</b></span><span th:text="${person.get().id}"></span>
         </div>
         <div>
-            <span><b>ФИО:</b></span><span th:text="${person.getFullName()}"></span>
+            <span><b>ФИО:</b></span><span th:text="${person.get().getFullName()}"></span>
         </div>
         <div>
-            <span><b>Дата рождения:</b></span><span th:text="${person.dateOfBirth}"></span>
+            <span><b>Дата рождения:</b></span><span th:text="${person.get().dateOfBirth}"></span>
         </div>
     </div>
-    <h4 th:text="${not #lists.isEmpty(person.booksDto)} ? 'Книги в пользовании' : 'Нет книг в пользовании...'"></h4>
-    <table border="1" th:if="${not #lists.isEmpty(person.booksDto)}">
+    <h4 th:text="${not #lists.isEmpty(person.get().booksDto)} ? 'Книги в пользовании' : 'Нет книг в пользовании...'"></h4>
+    <table border="1" th:if="${not #lists.isEmpty(person.get().booksDto)}">
         <tr>
             <th>№ Карточки</th>
             <th>Название</th>
             <th>Дата получения</th>
             <th>Дата возврата</th>
         </tr>
-        <tr th:each="pbooks : ${person.booksDto}">
+        <tr th:each="pbooks : ${person.get().booksDto}">
             <td th:text="${pbooks.id}">...</td>
             <td th:text="${pbooks.bookDto.bookName}">...</td>
             <td th:text="${#temporals.format(pbooks.dateTimeCreated, 'dd-MM-yyyy HH:mm')}">...</td>

@@ -14,7 +14,6 @@ public interface LibraryCardMapper extends MapMapper<LibraryCardDto, LibraryCard
 
     @Mapping(target = "bookDto", source = "book")
     @Mapping(target = "personDto", source = "person")
-
     LibraryCardDto toDto(LibraryCard libraryCard);
 
 

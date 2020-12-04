@@ -10,6 +10,7 @@ import org.mapstruct.Mapping;
  */
 @Mapper
 public interface UserMapper extends MapMapper<UserDto, User>{
+
     @Mapping(target = "password", ignore = true)
     UserDto toDto(User user);
 }

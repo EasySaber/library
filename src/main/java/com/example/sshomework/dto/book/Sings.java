@@ -5,11 +5,7 @@ package com.example.sshomework.dto.book;
  */
 
 public enum Sings {
-    MORE(">"),
-    LESS("<"),
-    EQUALLY("=");
-
-    Sings(String sing) {
-
-    }
+    MORE,
+    LESS,
+    EQUALLY
 }

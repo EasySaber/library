@@ -1,28 +1,35 @@
 package com.example.sshomework.entity;
 
 import com.example.sshomework.dto.user.RolesUser;
-import lombok.*;
-import org.springframework.security.crypto.bcrypt.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Table;
 
 /**
  * @author Aleksey Romodin
  */
 @Entity
 @Getter
+@Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @Table(name = "customer")
 public class User {
 
-    private static final BCryptPasswordEncoder PASSWORD_ENCODER = new BCryptPasswordEncoder();
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Setter
     @Column(name = "username")
     private String username;
 
@@ -32,8 +39,4 @@ public class User {
     @Column(name = "role")
     @Enumerated(EnumType.STRING)
     private RolesUser role;
-
-    public void setPassword(String password) {
-        this.password = PASSWORD_ENCODER.encode(password);
-    }
 }

@@ -18,7 +18,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 		info = @Info(title = "SsHomeWork API", version = "1.0", description = "API Services"),
 		security = {@SecurityRequirement(name = "basicAuth")}
 )
-@SpringBootApplication
+@SpringBootApplication()
 public class SsHomeWorkApplication {
 
 	public static void main(String[] args) {

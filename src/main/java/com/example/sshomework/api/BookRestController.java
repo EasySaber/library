@@ -1,31 +1,42 @@
 package com.example.sshomework.api;
 
-import com.example.sshomework.dto.book.*;
-import com.example.sshomework.dto.view.*;
-import com.example.sshomework.service.book.*;
-import com.fasterxml.jackson.annotation.*;
-import io.swagger.v3.oas.annotations.*;
-import io.swagger.v3.oas.annotations.media.*;
-import io.swagger.v3.oas.annotations.responses.*;
-import io.swagger.v3.oas.annotations.tags.*;
-import lombok.*;
-import org.springframework.http.*;
+import com.example.sshomework.dto.FullNameDto;
+import com.example.sshomework.dto.book.BookDto;
+import com.example.sshomework.dto.book.BookSearchRequest;
+import com.example.sshomework.dto.view.View;
+import com.example.sshomework.exception.DeleteRelatedDataException;
+import com.example.sshomework.service.book.BookService;
+import com.fasterxml.jackson.annotation.JsonView;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
-import javax.validation.*;
-import java.util.*;
+import javax.validation.Valid;
+import java.util.List;
 
 /**
  * @author Aleksey Romodin
  */
 @RestController
-@RequiredArgsConstructor
 @RequestMapping(value = "api/books")
 @Tag(name = "Book", description = "Book API")
 public class BookRestController {
 
     private final BookService bookService;
+
+    @Autowired
+    public BookRestController(BookService bookService) {
+        this.bookService = bookService;
+    }
 
     @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
     @JsonView(View.BookPost.class)
@@ -33,18 +44,13 @@ public class BookRestController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Поиск успешен",
                     content = {@Content(mediaType = "application/json",
-                            array = @ArraySchema(schema = @Schema(implementation = BookDto.class)))}),
-            @ApiResponse(responseCode = "404", description = "Поиск не дал результатов", content = @Content)
+                            array = @ArraySchema(schema = @Schema(implementation = BookDto.class)))})
     })
     @GetMapping("/getByAuthorFilter")
-    public ResponseEntity<?> getByAuthorFilter(@Parameter(description = "Имя автора")
-                                               @RequestParam(name = "firstName", required = false) String firstName,
-                                               @Parameter(description = "Отчество автора")
-                                               @RequestParam(name = "middleName", required = false) String middleName,
-                                               @Parameter(description = "Фамилия автора")
-                                               @RequestParam(name = "lastName", required = false) String lastName) {
-        List<BookDto> books = bookService.getByAuthorFilter(firstName, middleName, lastName);
-        return books.isEmpty() ? ResponseEntity.notFound().build() : ResponseEntity.ok(books);
+    public ResponseEntity<List<BookDto>> getByAuthorFilter(
+            @Parameter(description = "Параметры поиска") FullNameDto request)
+    {
+        return ResponseEntity.ok(bookService.getByAuthorFilter(request));
     }
 
     @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
@@ -54,16 +60,14 @@ public class BookRestController {
             @ApiResponse(responseCode = "200", description = "Поиск успешен",
                     content = {@Content(mediaType = "application/json",
                             array = @ArraySchema(schema = @Schema(implementation = BookDto.class)))}),
-            @ApiResponse(responseCode = "404", description = "Поиск не дал результатов", content = @Content)
+            @ApiResponse(responseCode = "404", description = "Жанр не найден.", content = @Content)
     })
     @GetMapping("/getByGenre")
-    public ResponseEntity<?> getByGenre(@RequestParam(name = "id")
-                                        @Parameter(description = "Id жанра") Long id) {
-        List<BookDto> books = bookService.getByGenre(id);
-        if (books != null) {
-            return books.isEmpty() ? ResponseEntity.notFound().build() : ResponseEntity.ok(books);
-        }
-        return ResponseEntity.notFound().build();
+    public ResponseEntity<List<BookDto>> getByGenre(
+            @RequestParam(name = "genreName")
+            @Parameter(description = "Название жанра") String genreName)
+    {
+        return ResponseEntity.ok(bookService.getByGenre(genreName));
     }
 
 
@@ -74,28 +78,31 @@ public class BookRestController {
             @ApiResponse(responseCode = "200", description = "Данные добавлены",
                     content = {@Content(mediaType = "application/json",
                             schema = @Schema(implementation = BookDto.class))}),
-            @ApiResponse(responseCode = "400", description = "Ошибка в переданных данных", content = @Content),
-
+            @ApiResponse(responseCode = "400", description = "Ошибка в переданных данных", content = @Content)
     })
     @PostMapping("/add")
-    public ResponseEntity<?> addNewBook(@JsonView(View.Book.class)
-                                        @Parameter(description = "Добавление данных о новой книге")
-                                        @RequestBody BookDto bookDto) {
-        BookDto book = bookService.addNewBook(bookDto);
-        return book != null ? ResponseEntity.ok(book) : ResponseEntity.badRequest().build();
+    public ResponseEntity<BookDto> addNewBook(
+            @JsonView(View.Book.class)
+            @Parameter(description = "Добавление данных о новой книге")
+            @Valid @RequestBody BookDto bookDto)
+    {
+        return ResponseEntity.of(bookService.addNewBook(bookDto));
     }
 
     @PreAuthorize("hasRole('ADMIN')")
     @Operation(description = "Удаление книги по ID")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Данные удалены", content = @Content),
-            @ApiResponse(responseCode = "404", description = "Данные не найдены/книга в пользовании",
-                    content = @Content)
+            @ApiResponse(responseCode = "404", description = "Данные не найдены", content = @Content),
+            @ApiResponse(responseCode = "423", description = "Запрет на удаление", content = @Content)
     })
     @DeleteMapping("/delete")
-    public ResponseEntity<Void> deleteBook(@RequestParam(name = "id")
-                                           @Parameter(description = "Id книги") Long id) {
-        return bookService.deleteBookById(id) ? ResponseEntity.ok().build() : ResponseEntity.notFound().build();
+    public void deleteBook(
+            @RequestParam(name = "id")
+            @Parameter(description = "Id книги") Long id)
+            throws DeleteRelatedDataException
+    {
+        bookService.deleteBookById(id);
     }
 
     @PreAuthorize("hasRole('ADMIN')")
@@ -109,12 +116,13 @@ public class BookRestController {
 
     })
     @PutMapping("/updateGenres")
-    public ResponseEntity<?> updateGenres(@Parameter(description = "Id книги")
-                                          @RequestParam(name = "bookId") Long bookId,
-                                          @Parameter(description = "Id жанров книги")
-                                          @RequestParam(name = "genres[]") List<Long> genres) {
-        BookDto book = bookService.updateGenres(bookId, genres);
-        return book != null ? ResponseEntity.ok(book) : ResponseEntity.notFound().build();
+    public ResponseEntity<BookDto> updateGenres(
+            @Parameter(description = "Id книги")
+            @RequestParam(name = "bookId") Long bookId,
+            @Parameter(description = "Id жанров книги")
+            @RequestParam(name = "genres[]") List<String> genres)
+    {
+        return ResponseEntity.of(bookService.updateGenres(bookId, genres));
     }
 
     @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
@@ -128,24 +136,14 @@ public class BookRestController {
             @ApiResponse(responseCode = "404", description = "Поиск не дал результатов", content = @Content)
     })
     @GetMapping("/getBookInParameter")
-    public ResponseEntity<?> getBookInParameter(
-            @Parameter(description = "Жанр")
-            @RequestParam(name = "genre", required = false) String genre,
-            @Parameter(description = "Год издания")
-            @RequestParam(name = "year", required = false) @Valid Integer yearPublication,
-            @Parameter(description = "Признак фильтра('>', '<', '=')")
-            @RequestParam(name = "sing", required = false) @Valid Sings sing) {
-
-        if ((yearPublication != null) & (sing == null)) {
+    public ResponseEntity<List<BookDto>> getBookInParameter(
+            @Parameter(description = "Параметры")
+            @Valid BookSearchRequest request)
+    {
+        if ((request.getYearPublication() != null) && (request.getSing() == null)) {
             return ResponseEntity.badRequest().build();
         }
-        BookSearchRequest request = BookSearchRequest.builder()
-                .genre(genre)
-                .yearPublication(yearPublication)
-                .sing(sing)
-                .build();
-        List<BookDto> books = bookService.getBookInParameters(request);
-        return books.isEmpty() ? ResponseEntity.notFound().build() : ResponseEntity.ok(books);
+        return ResponseEntity.ok(bookService.getBookInParameters(request));
     }
 
 }

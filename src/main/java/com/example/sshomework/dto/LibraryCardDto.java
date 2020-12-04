@@ -8,8 +8,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.time.Period;
 import java.time.ZonedDateTime;
-import java.time.temporal.ChronoUnit;
 
 /**
  * @author Aleksey Romodin
@@ -37,7 +37,8 @@ public class LibraryCardDto {
 
     @JsonView(View.LibraryCard.class)
     private Long daysDept() {
-        long daysDept = ChronoUnit.DAYS.between(dateTimeReturn, ZonedDateTime.now());
+        long daysDept = Period.between(dateTimeReturn.toLocalDate(),
+                ZonedDateTime.now().toLocalDate()).getDays();
         return daysDept < 0 ? 0 : daysDept;
     }
 

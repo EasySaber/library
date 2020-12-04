@@ -30,12 +30,8 @@ public interface BookStatusMapper {
         book.getGenres().forEach(genre -> genres.add(genre.getGenreName()));
 
         bookStatusDto.setStatus(book.getPersons().isEmpty() ? "Свободна" : "В пользовании");
-        bookStatusDto.setGenreList(genres.toString()
-                .replace("[","")
-                .replace("]", "")
-                .trim());
+        bookStatusDto.setGenreList(genres.toString().replaceAll("^\\[|]$","").trim());
         bookStatusDto.setAuthorBook(author.getFirstName() + " "+ author.getMiddleName() + " " + author.getLastName());
     }
-
     List<BookStatusDto> toDtoList(List<Book> books);
 }

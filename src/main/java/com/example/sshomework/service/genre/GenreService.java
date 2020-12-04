@@ -2,6 +2,7 @@ package com.example.sshomework.service.genre;
 
 import com.example.sshomework.dto.genre.GenreDto;
 import com.example.sshomework.dto.genre.GenreStatisticsProjection;
+import com.example.sshomework.exception.NotUniqueValueException;
 
 import java.util.List;
 
@@ -10,7 +11,7 @@ import java.util.List;
  */
 public interface GenreService {
     List<GenreDto> getAll();
-    void addNewGenre(GenreDto genreDto);
+    void addNewGenre(GenreDto genreDto) throws NotUniqueValueException;
     List<GenreStatisticsProjection> getGenreStatistics();
-    Boolean deleteGenre(Long id);
+    void deleteGenre(String genreName);
 }

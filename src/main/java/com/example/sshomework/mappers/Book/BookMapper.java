@@ -13,6 +13,7 @@ import java.util.List;
  */
 @Mapper(componentModel = "spring")
 public interface BookMapper extends MapMapper<BookDto, Book> {
+
     @Mapping(source = "authorBookDto", target = "authorBook")
     Book toEntity(BookDto book);
 

@@ -4,11 +4,13 @@ import com.example.sshomework.dto.author.AuthorDto;
 import com.example.sshomework.dto.author.AuthorSearchRequest;
 import com.example.sshomework.entity.Author;
 import com.example.sshomework.entity.Genre;
+import com.example.sshomework.exception.DeleteRelatedDataException;
 import com.example.sshomework.mappers.AuthorMapper;
 import com.example.sshomework.repository.GenreRepository;
 import com.example.sshomework.repository.author.AuthorRepository;
-import lombok.AllArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.webjars.NotFoundException;
 
 import java.util.HashSet;
 import java.util.List;
@@ -19,17 +21,22 @@ import java.util.Set;
  * @author Aleksey Romodin
  */
 @Service
-@AllArgsConstructor
 public class AuthorServiceImpl implements AuthorService {
 
     private final AuthorRepository authorRepository;
-    private final AuthorMapper authorMapper;
     private final GenreRepository genreRepository;
+    private final AuthorMapper authorMapper;
+
+    @Autowired
+    public AuthorServiceImpl(AuthorRepository authorRepository, GenreRepository genreRepository, AuthorMapper authorMapper) {
+        this.authorRepository = authorRepository;
+        this.genreRepository = genreRepository;
+        this.authorMapper = authorMapper;
+    }
 
     @Override
     public Optional<AuthorDto> getAuthorById(Long id){
-        Optional<Author> author = authorRepository.findById(id);
-        return author.map(authorMapper::toDto);
+        return authorRepository.findById(id).map(authorMapper::toDto);
     }
 
     @Override
@@ -38,7 +45,7 @@ public class AuthorServiceImpl implements AuthorService {
     }
 
     @Override
-    public AuthorDto addNewAuthor(AuthorDto authorDto){
+    public Optional<AuthorDto> addNewAuthor(AuthorDto authorDto){
 
         Author author = authorMapper.toEntity(authorDto);
 
@@ -46,25 +53,21 @@ public class AuthorServiceImpl implements AuthorService {
             book.setAuthorBook(author);
             Set<Genre> genresBook = new HashSet<>();
             book.getGenres().forEach(genre ->
-                genresBook.add(genreRepository.findById(genre.getId()).orElse(null)));
+                    genreRepository.findByGenreName(genre.getGenreName()).ifPresent(genresBook::add));
             book.setGenres(genresBook);
-            });
-
+        });
         authorRepository.save(author);
 
-        return authorMapper.toDto(authorRepository.findFirstByOrderByIdDesc());
+        return authorRepository.findFirstByOrderByIdDesc().map(authorMapper::toDto);
     }
 
     @Override
-    public Boolean deleteAuthorById(Long id){
-        Author author = authorRepository.findById(id).orElse(null);
-        if (author != null) {
-            if (author.getBooks().stream().noneMatch(book -> book.getPersons().size() > 0)) {
-                authorRepository.deleteById(id);
-                return true;
-            }
+    public void deleteAuthorById(Long id) throws DeleteRelatedDataException {
+        Author author = authorRepository.findById(id).orElseThrow(() -> new NotFoundException("Автор не найден"));
+        if (author.getBooks().stream().anyMatch(book -> book.getPersons().size() > 0)) {
+            throw new DeleteRelatedDataException("Удаление невозможно. Книги автора находяться в пользовании.");
         }
-        return false;
+        authorRepository.deleteById(id);
     }
 
     @Override

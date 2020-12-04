@@ -4,10 +4,15 @@ import com.example.sshomework.dto.book.BookSearchRequest;
 import com.example.sshomework.dto.book.Sings;
 import com.example.sshomework.entity.Book;
 import com.example.sshomework.entity.Genre;
-import lombok.RequiredArgsConstructor;
 
 import javax.persistence.EntityManager;
-import javax.persistence.criteria.*;
+import javax.persistence.PersistenceContext;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Join;
+import javax.persistence.criteria.JoinType;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -15,10 +20,10 @@ import java.util.List;
 /**
  * @author Aleksey Romodin
  */
-@RequiredArgsConstructor
 public class CustomBookRepositoryImpl implements CustomBookRepository {
 
-    private final EntityManager entityManager;
+    @PersistenceContext
+    EntityManager entityManager;
 
     @Override
     public List<Book> customFilter(BookSearchRequest request) {

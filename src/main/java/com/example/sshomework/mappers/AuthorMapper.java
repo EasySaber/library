@@ -1,8 +1,8 @@
 package com.example.sshomework.mappers;
 
-import com.example.sshomework.dto.author.*;
-import com.example.sshomework.entity.*;
-import org.mapstruct.*;
+import com.example.sshomework.dto.author.AuthorDto;
+import com.example.sshomework.entity.Author;
+import org.mapstruct.Mapper;
 
 /**
  * @author Aleksey Romodin

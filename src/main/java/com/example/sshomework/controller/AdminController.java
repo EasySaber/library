@@ -1,6 +1,7 @@
 package com.example.sshomework.controller;
 
 import com.example.sshomework.dto.user.UserDto;
+import com.example.sshomework.exception.NotUniqueValueException;
 import com.example.sshomework.service.user.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
@@ -40,20 +41,18 @@ public class AdminController {
 
     @PostMapping(value = "/registration")
     public String saveUser(
-            @ModelAttribute(name = "newUser")
-            @Valid UserDto user,
-            BindingResult validResult)
-    {
+            @ModelAttribute(name = "newUser") @Valid UserDto user,
+            BindingResult validResult) {
         if (validResult.hasErrors()) {
             return "admin/registration";
         }
-        if (!userService.userUnique(user.getUsername())) {
-            //Пользователь с таким именем уже существует
+        try {
+            userService.addNewUser(user);
+        } catch (NotUniqueValueException exception) {
             validResult.rejectValue("username", "badUniqueUser");
             return "admin/registration";
         }
-        System.out.println();
-        userService.addNewUser(user);
+
         return "redirect:/admin/";
     }
 

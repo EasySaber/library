@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 /**
  * @author Aleksey Romodin
@@ -15,7 +16,8 @@ import java.util.List;
 public interface GenreRepository extends JpaRepository<Genre, Long> {
     @Query(value = "SELECT a.genre_name AS genreName, count(b.book_id) AS count " +
                     "FROM genre a " +
-                    "INNER JOIN book_genre b On a.id = b.genre_id " +
+                    "LEFT JOIN book_genre b On a.id = b.genre_id " +
                     "GROUP BY a.genre_name", nativeQuery = true)
     List<GenreStatisticsProjection> getGenreStatistics();
+    Optional<Genre> findByGenreName(String genreName);
 }

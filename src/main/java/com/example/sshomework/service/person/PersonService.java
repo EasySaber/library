@@ -1,5 +1,6 @@
 package com.example.sshomework.service.person;
 
+import com.example.sshomework.dto.FullNameDto;
 import com.example.sshomework.dto.PersonDto;
 
 import java.util.List;
@@ -9,21 +10,21 @@ import java.util.Optional;
  * @author Aleksey Romodin
  */
 public interface PersonService {
-    Boolean deletePersonsByFullName(String firstName, String middleName, String lastName);
+    void deletePersonsByFullName(FullNameDto fullNameDto);
 
-    PersonDto addNewPerson(PersonDto personDto);
+    Optional<PersonDto> addNewPerson(PersonDto personDto);
 
     Optional<PersonDto> updatePerson(PersonDto personDto);
 
-    Boolean deletePersonById(Long id);
+    void deletePersonById(Long id);
 
     List<PersonDto> getAll();
 
-    PersonDto getBooksByAuthorId(Long id);
+    Optional<PersonDto> getBooksByAuthorId(Long id);
 
-    PersonDto addNewPostLibraryCard(Long personId, Long bookId);
+    Optional<PersonDto> addNewPostLibraryCard(Long personId, Long bookId);
 
-    PersonDto deletePostLibraryCard(Long personId, Long bookId);
+    Optional<PersonDto> deletePostLibraryCard(Long personId, Long bookId);
 
-    PersonDto getListUserBooks();
+    Optional<PersonDto> getListUserBooks();
 }
