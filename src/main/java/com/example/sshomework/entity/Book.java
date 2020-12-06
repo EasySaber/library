@@ -1,10 +1,24 @@
 package com.example.sshomework.entity;
 
-import com.example.sshomework.dto.view.View;
-import com.fasterxml.jackson.annotation.JsonView;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
-import javax.persistence.*;
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
+import java.time.LocalDate;
 import java.util.Set;
 
 /**
@@ -20,26 +34,24 @@ public class Book extends MainEntity{
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @JsonView({View.All.class, View.PersonOfAllTheBook.class, View.UpdateBookGenres.class})
     private Long id;
 
-    @JsonView({View.Public.class, View.PersonOfAllTheBookSmall.class, View.Book.class})
     @Column(name = "book_name")
     private String bookName;
 
+    @Column(name = "date_publication")
+    private LocalDate datePublication;
+
     @ManyToOne
     @JoinColumn(name = "author_id")
-    @JsonView({View.All.class, View.PersonOfAllTheBook.class, View.Book.class})
     private Author authorBook;
 
-    @JsonView({View.Public.class, View.PersonOfAllTheBook.class, View.Book.class, View.UpdateBookGenres.class})
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "book_genre",
             joinColumns = @JoinColumn(name = "book_id"),
             inverseJoinColumns = @JoinColumn(name = "genre_id"))
     private Set<Genre> genres;
 
-    @JsonView(View.All.class)
     @OneToMany(mappedBy = "book", fetch = FetchType.EAGER, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     private Set<LibraryCard> persons;
 }

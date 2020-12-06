@@ -1,5 +1,6 @@
 package com.example.sshomework.dto;
 
+import com.example.sshomework.dto.user.UserDto;
 import com.example.sshomework.dto.view.View;
 import com.fasterxml.jackson.annotation.JsonView;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -49,7 +50,10 @@ public class PersonDto {
     @JsonView({View.PersonOfAllTheBookSmall.class})
     private Set<LibraryCardDto> booksDto;
 
-    @JsonView({View.Private.class,  View.LibraryCard.class})
+    @JsonView(View.Private.class)
+    private UserDto account;
+
+    @JsonView({View.Private.class, View.LibraryCard.class})
     public String getFullName() {
         return firstName + " " + middleName + " " + lastName;
     }

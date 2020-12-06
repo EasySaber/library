@@ -1,0 +1,66 @@
+databaseChangeLog:
+  - changeSet:
+      id: 30-12-2020-001
+      author: Aleksey Romodin
+      comment: Add column for user
+      changes:
+        - addColumn:
+            tableName: customer
+            columns:
+              - column:
+                  name: role
+                  type: VARCHAR(10)
+  - changeSet:
+      id: 30-12-2020-002
+      author: Aleksey Romodin
+      comment: Update for user
+      changes:
+        - sql: UPDATE customer SET username = 'admin', role = 'ADMIN' WHERE username = 'user';
+  - changeSet:
+      id: 30-12-2020-003
+      author: Aleksey Romodin
+      comment: Add new customers with roles
+      changes:
+        - sqlFile:
+            dbms: 'postgresql'
+            encoding: UTF-8
+            path: db/changelog/default-values/customers.sql
+            relativeToChangelogFile: false
+            splitStatements: true
+            stripComments: true
+  - changeSet:
+      id: 30-12-2020-004
+      author: Aleksey Romodin
+      comment: Add column for person
+      changes:
+        - addColumn:
+            tableName: person
+            columns:
+              - column:
+                  name: account_id
+                  type: BIGINT
+  - changeSet:
+      id: 30-12-2020-005
+      author: Aleksey Romodin
+      comment: Add person to user relation
+      changes:
+        - addForeignKeyConstraint:
+            constraintName: fk_account
+            baseTableName: person
+            baseColumnNames: account_id
+            referencedTableName: customer
+            referencedColumnNames: id
+            onDelete: 'SET NULL'
+            onUpdate: 'RESTRICT'
+  - changeSet:
+      id: 30-12-2020-006
+      author: Aleksey Romodin
+      comment: Update account for person
+      changes:
+        - sqlFile:
+            dbms: 'postgresql'
+            encoding: UTF-8
+            path: db/changelog/default-values/update_v_0.0.2.sql
+            relativeToChangelogFile: false
+            splitStatements: true
+            stripComments: true

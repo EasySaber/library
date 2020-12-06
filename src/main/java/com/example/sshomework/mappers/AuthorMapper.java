@@ -1,6 +1,6 @@
 package com.example.sshomework.mappers;
 
-import com.example.sshomework.dto.AuthorDto;
+import com.example.sshomework.dto.author.AuthorDto;
 import com.example.sshomework.entity.Author;
 import org.mapstruct.Mapper;
 
@@ -9,5 +9,4 @@ import org.mapstruct.Mapper;
  */
 @Mapper
 public interface AuthorMapper extends MapMapper<AuthorDto, Author> {
-
 }

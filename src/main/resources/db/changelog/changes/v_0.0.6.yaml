@@ -1,0 +1,13 @@
+databaseChangeLog:
+  - changeSet:
+      id: 26-11-2020-003
+      author: Aleksey Romodin
+      comment: Update
+      changes:
+        - sqlFile:
+            dbms: 'postgresql'
+            encoding: UTF-8
+            path: db/changelog/default-values/update_v_0.0.1.sql
+            relativeToChangelogFile: false
+            splitStatements: true
+            stripComments: true

@@ -1,5 +1,6 @@
-package com.example.sshomework.dto;
+package com.example.sshomework.dto.author;
 
+import com.example.sshomework.dto.book.BookDto;
 import com.example.sshomework.dto.view.View;
 import com.fasterxml.jackson.annotation.JsonView;
 import lombok.AllArgsConstructor;
@@ -9,6 +10,8 @@ import lombok.Setter;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
+import java.time.LocalDate;
+import java.time.ZonedDateTime;
 import java.util.Set;
 
 /**
@@ -43,4 +46,12 @@ public class AuthorDto {
 
     @JsonView({View.Public.class, View.AddAuthor.class})
     private Set<BookDto> books;
+
+    @JsonView({View.Public.class, View.Private.class, View.AddAuthor.class,
+            View.AuthorOfAllTheBook.class, View.PersonOfAllTheBook.class, View.BookPost.class})
+    private LocalDate dateTimeOfBirth;
+
+    @JsonView({View.Public.class, View.Private.class, View.AddAuthor.class,
+            View.AuthorOfAllTheBook.class, View.PersonOfAllTheBook.class, View.BookPost.class})
+    private ZonedDateTime dateTimeCreated;
 }

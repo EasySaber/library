@@ -19,12 +19,12 @@ import javax.validation.constraints.Size;
 @NoArgsConstructor
 public class GenreDto {
 
-    @JsonView({View.All.class, View.AddAuthor.class, View.PersonOfAllTheBook.class, View.Book.class,
-            View.UpdateBookGenres.class})
+    @JsonView({View.All.class, View.PersonOfAllTheBook.class, View.UpdateBookGenres.class})
     private Long id;
 
     @NotBlank(message = "Пустое значение")
     @Size(max = 64)
-    @JsonView({View.Public.class, View.PersonOfAllTheBook.class, View.BookPost.class})
+    @JsonView({View.Public.class, View.Book.class, View.AddAuthor.class, View.PersonOfAllTheBook.class,
+            View.BookPost.class})
     private String genreName;
 }

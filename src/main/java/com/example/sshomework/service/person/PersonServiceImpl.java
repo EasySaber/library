@@ -1,14 +1,19 @@
 package com.example.sshomework.service.person;
 
+import com.example.sshomework.dto.FullNameDto;
 import com.example.sshomework.dto.PersonDto;
 import com.example.sshomework.entity.Book;
 import com.example.sshomework.entity.LibraryCard;
 import com.example.sshomework.entity.Person;
 import com.example.sshomework.mappers.PersonMapper;
-import com.example.sshomework.repository.BookRepository;
 import com.example.sshomework.repository.PersonRepository;
-import lombok.RequiredArgsConstructor;
+import com.example.sshomework.repository.book.BookRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
+import org.webjars.NotFoundException;
 
 import java.util.List;
 import java.util.Optional;
@@ -18,12 +23,21 @@ import java.util.Set;
  * @author Aleksey Romodin
  */
 @Service
-@RequiredArgsConstructor
 public class PersonServiceImpl implements PersonService {
 
     private final PersonRepository personRepository;
     private final BookRepository bookRepository;
     private final PersonMapper personMapper;
+
+    @Autowired
+    public PersonServiceImpl(PersonRepository personRepository,
+                             BookRepository bookRepository,
+                             PersonMapper personMapper)
+    {
+        this.personRepository = personRepository;
+        this.bookRepository = bookRepository;
+        this.personMapper = personMapper;
+    }
 
     @Override
     public List<PersonDto> getAll() {
@@ -31,69 +45,68 @@ public class PersonServiceImpl implements PersonService {
     }
 
     @Override
-    public Boolean deletePersonsByFullName(String firstName, String middleName, String lastName) {
-        List<Person> persons =
-                personRepository.findByFirstNameAndMiddleNameAndLastName(firstName, middleName, lastName);
-        if (!persons.isEmpty()) {
+    public void deletePersonsByFullName(FullNameDto fullName) {
+        List<Person> persons = personRepository.findByFirstNameAndMiddleNameAndLastName(
+                fullName.getFirstName(), fullName.getMiddleName(), fullName.getLastName());
+        if (persons.isEmpty()) {
             personRepository.deleteAll(persons);
-            return true;
         }
-        return false;
+        throw new NotFoundException("Совпадения не найдены.");
     }
 
     @Override
-    public PersonDto getBooksByAuthorId(Long id) {
-        Optional<Person> person = personRepository.findById(id);
-        return person.map(personMapper::toDto).orElse(null);
+    public Optional<PersonDto> getBooksByAuthorId(Long id) {
+        return personRepository.findById(id).map(personMapper::toDto);
     }
 
     @Override
-    public PersonDto addNewPerson(PersonDto personDto) {
+    public Optional<PersonDto> addNewPerson(PersonDto personDto) {
         personRepository.save(personMapper.toEntity(personDto));
-        return personMapper.toDto(personRepository.findFirstByOrderByIdDesc());
+        return personRepository.findFirstByOrderByIdDesc().map(personMapper::toDto);
     }
 
     @Override
     public Optional<PersonDto> updatePerson(PersonDto personDto) {
+        Person personIncoming = personMapper.toEntity(personDto);
+        Person personStored = getPerson(personIncoming.getId());
 
-        Person personIncoming= personMapper.toEntity(personDto);
-        Person personStored = personRepository.findById(personIncoming.getId()).orElse(null);
+        personStored.setFirstName(personIncoming.getFirstName());
+        personStored.setMiddleName(personIncoming.getMiddleName());
+        personStored.setLastName(personIncoming.getLastName());
+        personStored.setDateOfBirth(personIncoming.getDateOfBirth());
+        personRepository.save(personStored);
+        return Optional.of(personMapper.toDto(personStored));
 
-        if (personStored != null) {
-            personStored.setFirstName(personIncoming.getFirstName());
-            personStored.setMiddleName(personIncoming.getMiddleName());
-            personStored.setLastName(personIncoming.getLastName());
-            personStored.setDateOfBirth(personIncoming.getDateOfBirth());
-            personRepository.save(personStored);
-            return Optional.of(personMapper.toDto(personStored));
-        }
-        return Optional.empty();
     }
 
     @Override
-    public Boolean deletePersonById(Long id) {
-        if (personRepository.findById(id).isPresent()) {
-            personRepository.deleteById(id);
-            return true;
-        }
-        return false;
+    public void deletePersonById(Long id) {
+        Person person = getPerson(id);
+        personRepository.delete(person);
     }
 
     @Override
-    public PersonDto addNewPostLibraryCard(Long personId, Long bookId) {
+    public Optional<PersonDto> addNewPostLibraryCard(Long personId, Long bookId) {
         return updateLibraryCard(personId, bookId, false);
     }
 
     @Override
-    public PersonDto deletePostLibraryCard(Long personId, Long bookId) {
-        return  updateLibraryCard(personId, bookId, true);
+    public Optional<PersonDto> deletePostLibraryCard(Long personId, Long bookId) {
+        return updateLibraryCard(personId, bookId, true);
     }
 
-    private PersonDto updateLibraryCard(Long personId, Long bookId, Boolean operation) {
-        Person person = personRepository.findById(personId).orElse(null);
-        Book bookIncoming = bookRepository.findById(bookId).orElse(null);
+    @Override
+    public Optional<PersonDto> getListUserBooks() {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        UserDetails user = (UserDetails) auth.getPrincipal();
+        return personRepository.findByAccount_Username(user.getUsername()).map(personMapper::toDto);
+    }
 
-        if (person != null & bookIncoming != null) {
+    private Optional<PersonDto> updateLibraryCard(Long personId, Long bookId, Boolean operation) {
+        Person person = getPerson(personId);
+        Book bookIncoming = bookRepository.findById(bookId)
+                .orElseThrow(() -> new NotFoundException("Книга не найдена."));
+
             Set<LibraryCard> libraryCards = person.getBooks();
             if (operation) { //Удаление книги
                 libraryCards.removeIf(libraryCard -> (libraryCard.getBook().getId().equals(bookId)));
@@ -105,8 +118,12 @@ public class PersonServiceImpl implements PersonService {
                 person.setBooks(libraryCards);
             }
             personRepository.save(person);
-            return personMapper.toDto(person);
-        }
-        return null;
+            return Optional.of(person).map(personMapper::toDto);
     }
+
+    private Person getPerson(Long id) {
+        return personRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException("Пользователь не найден."));
+    }
+
 }

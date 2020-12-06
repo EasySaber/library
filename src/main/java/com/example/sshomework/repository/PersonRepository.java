@@ -6,6 +6,7 @@ import org.springframework.stereotype.Repository;
 
 import javax.transaction.Transactional;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * @author Aleksey Romodin
@@ -14,8 +15,9 @@ import java.util.List;
 @Transactional
 public interface PersonRepository extends JpaRepository<Person, Long> {
     //Последняя запись
-    Person findFirstByOrderByIdDesc();
+    Optional<Person> findFirstByOrderByIdDesc();
     //Поиск совпадений по ФИО
     List<Person> findByFirstNameAndMiddleNameAndLastName(String firstName, String middleName, String lastName);
-
+    //Поиск по аккаунту
+    Optional<Person> findByAccount_Username(String username);
 }
