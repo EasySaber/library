@@ -16,3 +16,9 @@ databaseChangeLog:
   # Добавление для пользователей аккаунтов с ролями
   - include:
       file: db/changelog/changes/v_0.0.8.yaml
+  # Обновление паролей для пользователей
+  - include:
+      file: db/changelog/changes/v_0.0.9.yaml
+  # Добавление новых столбцов в таблицу "Аккаунт" для блокировки входа
+  - include:
+      file: db/changelog/changes/v_0.0.10.yaml

@@ -1,7 +1,6 @@
 package com.example.sshomework.mappers.Book;
 
 import com.example.sshomework.dto.book.BookStatusDto;
-import com.example.sshomework.entity.Author;
 import com.example.sshomework.entity.Book;
 import org.mapstruct.AfterMapping;
 import org.mapstruct.Mapper;
@@ -10,6 +9,8 @@ import org.mapstruct.MappingTarget;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
+import java.util.Set;
 
 /**
  * @author Aleksey Romodin
@@ -24,14 +25,25 @@ public interface BookStatusMapper {
 
     @AfterMapping
     default void setBookAuthor(@MappingTarget BookStatusDto bookStatusDto, Book book) {
-        Author author = book.getAuthorBook();
 
         List<String> genres = new ArrayList<>();
-        book.getGenres().forEach(genre -> genres.add(genre.getGenreName()));
 
-        bookStatusDto.setStatus(book.getPersons().isEmpty() ? "Свободна" : "В пользовании");
-        bookStatusDto.setGenreList(genres.toString().replaceAll("^\\[|]$","").trim());
-        bookStatusDto.setAuthorBook(author.getFirstName() + " "+ author.getMiddleName() + " " + author.getLastName());
+        Optional.of(book.getAuthorBook()).ifPresent(author ->
+                bookStatusDto.setAuthorBook(author.getFirstName() + " "+ author.getMiddleName() + " " + author.getLastName()));
+
+        Optional.ofNullable(book.getGenres()).ifPresent(gs -> {
+            if (!gs.isEmpty()) {
+                gs.forEach(genre -> genres.add(genre.getGenreName()));
+            }
+        });
+        bookStatusDto.setGenreList(genres.isEmpty() ? "Без жанра" : genres.toString().replaceAll("^\\[|]$","").trim());
+
+
+        bookStatusDto.setStatus(
+                Optional.ofNullable(book.getPersons()).map(Set::isEmpty)
+                        .equals(Optional.of(false)) ? "В пользовании" : "Свободна"
+        );
     }
+
     List<BookStatusDto> toDtoList(List<Book> books);
 }

@@ -2,10 +2,7 @@ package com.example.sshomework.dto.genre;
 
 import com.example.sshomework.dto.view.View;
 import com.fasterxml.jackson.annotation.JsonView;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
@@ -17,6 +14,8 @@ import javax.validation.constraints.Size;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
+@EqualsAndHashCode
+@ToString
 public class GenreDto {
 
     @JsonView({View.All.class, View.PersonOfAllTheBook.class, View.UpdateBookGenres.class})

@@ -46,16 +46,17 @@ public class AuthorServiceImpl implements AuthorService {
 
     @Override
     public Optional<AuthorDto> addNewAuthor(AuthorDto authorDto){
-
         Author author = authorMapper.toEntity(authorDto);
 
-        author.getBooks().forEach(book -> {
-            book.setAuthorBook(author);
-            Set<Genre> genresBook = new HashSet<>();
-            book.getGenres().forEach(genre ->
-                    genreRepository.findByGenreName(genre.getGenreName()).ifPresent(genresBook::add));
-            book.setGenres(genresBook);
-        });
+        Optional.ofNullable(author.getBooks()).ifPresent(books ->
+            books.forEach(book -> {
+                book.setAuthorBook(author);
+                Set<Genre> genresBook = new HashSet<>();
+                book.getGenres().forEach(genre ->
+                        genreRepository.findByGenreName(genre.getGenreName()).ifPresent(genresBook::add));
+                book.setGenres(genresBook);
+            })
+        );
         authorRepository.save(author);
 
         return authorRepository.findFirstByOrderByIdDesc().map(authorMapper::toDto);
@@ -64,10 +65,15 @@ public class AuthorServiceImpl implements AuthorService {
     @Override
     public void deleteAuthorById(Long id) throws DeleteRelatedDataException {
         Author author = authorRepository.findById(id).orElseThrow(() -> new NotFoundException("Автор не найден"));
-        if (author.getBooks().stream().anyMatch(book -> book.getPersons().size() > 0)) {
-            throw new DeleteRelatedDataException("Удаление невозможно. Книги автора находяться в пользовании.");
-        }
-        authorRepository.deleteById(id);
+        Optional.ofNullable(author.getBooks()).ifPresent(books -> {
+                    if (books.stream().anyMatch(book ->
+                            Optional.ofNullable(book.getPersons()).map(Set::isEmpty).equals(Optional.of(false))))
+                    {
+                        throw new DeleteRelatedDataException("Удаление невозможно. Книги автора находяться в пользовании.");
+                    }
+                }
+        );
+        authorRepository.delete(author);
     }
 
     @Override

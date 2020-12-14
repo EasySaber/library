@@ -3,10 +3,7 @@ package com.example.sshomework.dto;
 import com.example.sshomework.dto.book.BookDto;
 import com.example.sshomework.dto.view.View;
 import com.fasterxml.jackson.annotation.JsonView;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.time.Period;
 import java.time.ZonedDateTime;
@@ -18,6 +15,8 @@ import java.time.ZonedDateTime;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
+@EqualsAndHashCode
+@ToString
 public class LibraryCardDto {
 
     @JsonView({View.Private.class, View.LibraryCard.class})
@@ -29,9 +28,11 @@ public class LibraryCardDto {
     @JsonView({View.Private.class, View.LibraryCard.class})
     private PersonDto personDto;
 
+    @EqualsAndHashCode.Exclude
     @JsonView({View.PersonOfAllTheBook.class, View.LibraryCard.class})
     private ZonedDateTime dateTimeCreated;
 
+    @EqualsAndHashCode.Exclude
     @JsonView({View.PersonOfAllTheBook.class, View.LibraryCard.class})
     private ZonedDateTime dateTimeReturn;
 

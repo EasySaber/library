@@ -16,13 +16,17 @@
     <table border="1">
         <tr>
             <th>№</th>
-            <th>Username</th>
-            <th>ROLE</th>
+            <th>Логин</th>
+            <th>Роль</th>
+            <th>Дата входа/попытки</th>
+            <th>Количество попыток</th>
         </tr>
         <tr th:each ="user : ${users}">
             <td th:text="${user.id}">...</td>
             <td th:text="${user.username}">...</td>
             <td th:text="${user.role}"></td>
+            <td th:text="${#temporals.format(user.dateTimeInput, 'dd-MM-yyyy HH:mm')}"></td>
+            <td th:text="${user.loginAttemptInput}"></td>
         </tr>
     </table>
 

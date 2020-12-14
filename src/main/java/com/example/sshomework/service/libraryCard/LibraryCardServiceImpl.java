@@ -48,6 +48,7 @@ public class LibraryCardServiceImpl implements LibraryCardService {
         return libraryCardMapper.toDtoList(
                 libraryCards.stream().filter(libraryCard -> (libraryCard.daysDept() > 0))
                         .collect(Collectors.toList()));
+
     }
 
     @Override

@@ -4,15 +4,11 @@ import com.example.sshomework.dto.book.BookSearchRequest;
 import com.example.sshomework.dto.book.Sings;
 import com.example.sshomework.entity.Book;
 import com.example.sshomework.entity.Genre;
+import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Join;
-import javax.persistence.criteria.JoinType;
-import javax.persistence.criteria.Predicate;
-import javax.persistence.criteria.Root;
+import javax.persistence.criteria.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -20,10 +16,11 @@ import java.util.List;
 /**
  * @author Aleksey Romodin
  */
+@Service
 public class CustomBookRepositoryImpl implements CustomBookRepository {
 
     @PersistenceContext
-    EntityManager entityManager;
+    private EntityManager entityManager;
 
     @Override
     public List<Book> customFilter(BookSearchRequest request) {
@@ -40,7 +37,7 @@ public class CustomBookRepositoryImpl implements CustomBookRepository {
 
         if (genre != null) {
             Join<Book, Genre> bookGenreJoin = book.join("genres", JoinType.INNER);
-            predicates.add(cBuilder.equal(bookGenreJoin.get("genreName"), genre.toLowerCase()));
+            predicates.add(cBuilder.equal(cBuilder.lower(bookGenreJoin.get("genreName")), genre.toLowerCase()));
         }
         if (yearPublication !=null){
             if (sing == Sings.MORE) {

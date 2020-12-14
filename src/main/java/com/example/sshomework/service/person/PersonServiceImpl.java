@@ -15,6 +15,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.webjars.NotFoundException;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -48,15 +49,16 @@ public class PersonServiceImpl implements PersonService {
     public void deletePersonsByFullName(FullNameDto fullName) {
         List<Person> persons = personRepository.findByFirstNameAndMiddleNameAndLastName(
                 fullName.getFirstName(), fullName.getMiddleName(), fullName.getLastName());
-        if (persons.isEmpty()) {
+        if (!persons.isEmpty()) {
             personRepository.deleteAll(persons);
+        } else {
+            throw new NotFoundException("Совпадения не найдены.");
         }
-        throw new NotFoundException("Совпадения не найдены.");
     }
 
     @Override
     public Optional<PersonDto> getBooksByAuthorId(Long id) {
-        return personRepository.findById(id).map(personMapper::toDto);
+        return Optional.of(getPerson(id)).map(personMapper::toDto);
     }
 
     @Override
@@ -81,8 +83,7 @@ public class PersonServiceImpl implements PersonService {
 
     @Override
     public void deletePersonById(Long id) {
-        Person person = getPerson(id);
-        personRepository.delete(person);
+        personRepository.delete(getPerson(id));
     }
 
     @Override
@@ -107,16 +108,19 @@ public class PersonServiceImpl implements PersonService {
         Book bookIncoming = bookRepository.findById(bookId)
                 .orElseThrow(() -> new NotFoundException("Книга не найдена."));
 
-            Set<LibraryCard> libraryCards = person.getBooks();
+            Set<LibraryCard> libraryCards;
             if (operation) { //Удаление книги
+                libraryCards = Optional.ofNullable(person.getBooks()).orElseThrow(() -> new NotFoundException("У пользователя нет взятых книг."));
                 libraryCards.removeIf(libraryCard -> (libraryCard.getBook().getId().equals(bookId)));
             } else {         //Добавление книги
+                libraryCards = Optional.of(person.getBooks()).orElse(new HashSet<>());
                 LibraryCard newCard = new LibraryCard();
                 newCard.setBook(bookIncoming);
                 newCard.setPerson(person);
                 libraryCards.add(newCard);
-                person.setBooks(libraryCards);
             }
+            person.getBooks().clear();
+            person.setBooks(libraryCards);
             personRepository.save(person);
             return Optional.of(person).map(personMapper::toDto);
     }
