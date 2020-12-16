@@ -19,6 +19,7 @@ import java.util.Set;
 @AllArgsConstructor
 @NoArgsConstructor
 @EqualsAndHashCode
+@ToString
 public class AuthorDto {
 
     @JsonView({View.Public.class, View.Private.class, View.AuthorOfAllTheBook.class,

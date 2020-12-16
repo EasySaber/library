@@ -1,5 +1,6 @@
 package com.example.sshomework.api;
 
+import com.example.sshomework.aspect.annotation.LoggerExecuteTime;
 import com.example.sshomework.dto.user.UserDto;
 import com.example.sshomework.dto.view.View;
 import com.example.sshomework.exception.NotUniqueValueException;
@@ -24,6 +25,7 @@ import javax.validation.Valid;
 /**
  * @author Aleksey Romodin
  */
+@LoggerExecuteTime
 @RestController
 @RequestMapping(value = "api/user")
 @Tag(name = "User", description = "User API")

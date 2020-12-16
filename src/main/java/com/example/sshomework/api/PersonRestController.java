@@ -1,5 +1,6 @@
 package com.example.sshomework.api;
 
+import com.example.sshomework.aspect.annotation.LoggerExecuteTime;
 import com.example.sshomework.dto.FullNameDto;
 import com.example.sshomework.dto.PersonDto;
 import com.example.sshomework.dto.view.View;
@@ -24,6 +25,7 @@ import java.util.List;
 /**
  * @author Aleksey Romodin
  */
+@LoggerExecuteTime
 @RestController
 @RequestMapping("/api/persons")
 @Tag(name = "Person", description = "Person API")

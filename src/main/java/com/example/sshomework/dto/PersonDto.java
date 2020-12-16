@@ -20,6 +20,7 @@ import java.util.Set;
 @AllArgsConstructor
 @NoArgsConstructor
 @EqualsAndHashCode
+@ToString
 public class PersonDto {
 
     @JsonView({View.All.class, View.PersonOfAllTheBookSmall.class,  View.LibraryCard.class})
@@ -45,6 +46,7 @@ public class PersonDto {
     @Schema(pattern = "yyyy-MM-dd", example = "2020-02-20")
     private LocalDate dateOfBirth;
 
+    @ToString.Exclude
     @EqualsAndHashCode.Exclude
     @JsonView({View.PersonOfAllTheBookSmall.class})
     private Set<LibraryCardDto> booksDto;

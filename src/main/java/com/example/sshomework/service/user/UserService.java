@@ -1,5 +1,6 @@
 package com.example.sshomework.service.user;
 
+import com.example.sshomework.aspect.annotation.LoggerCrud;
 import com.example.sshomework.config.AuthenticationTracker;
 import com.example.sshomework.dto.user.UserDto;
 import com.example.sshomework.entity.User;
@@ -44,6 +45,7 @@ public class UserService implements UserDetailsService{
         return userMapper.toDtoList(userRepository.findAll());
     }
 
+    @LoggerCrud(operation = LoggerCrud.Operation.CREATE)
     public void addNewUser(UserDto user) throws NotUniqueValueException {
             User userInput = userMapper.toEntity(user);
             String pass = passwordEncoder.encode(userInput.getPassword());

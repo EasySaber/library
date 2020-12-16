@@ -1,5 +1,6 @@
 package com.example.sshomework.api;
 
+import com.example.sshomework.aspect.annotation.LoggerExecuteTime;
 import com.example.sshomework.dto.author.AuthorDto;
 import com.example.sshomework.dto.author.AuthorSearchRequest;
 import com.example.sshomework.dto.view.View;
@@ -26,6 +27,7 @@ import java.util.List;
 /**
  * @author Aleksey Romodin
  */
+@LoggerExecuteTime
 @RestController
 @RequestMapping(value = "api/author")
 @Tag(name = "Author", description = "Author API")

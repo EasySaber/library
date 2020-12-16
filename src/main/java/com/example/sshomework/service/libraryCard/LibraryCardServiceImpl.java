@@ -1,5 +1,6 @@
 package com.example.sshomework.service.libraryCard;
 
+import com.example.sshomework.aspect.annotation.LoggerCrud;
 import com.example.sshomework.dto.LibraryCardDto;
 import com.example.sshomework.entity.Book;
 import com.example.sshomework.entity.LibraryCard;
@@ -62,6 +63,7 @@ public class LibraryCardServiceImpl implements LibraryCardService {
         return Optional.of(libraryCard).map(libraryCardMapper::toDto);
     }
 
+    @LoggerCrud(operation = LoggerCrud.Operation.CREATE)
     @Override
     public Optional<LibraryCardDto> addNewCard(Long personId, Long bookId) throws PersonBookDebtException {
         Person person = personRepository.findById(personId)

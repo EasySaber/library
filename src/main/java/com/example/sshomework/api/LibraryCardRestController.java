@@ -1,5 +1,6 @@
 package com.example.sshomework.api;
 
+import com.example.sshomework.aspect.annotation.LoggerExecuteTime;
 import com.example.sshomework.dto.LibraryCardDto;
 import com.example.sshomework.dto.view.View;
 import com.example.sshomework.exception.PersonBookDebtException;
@@ -24,6 +25,7 @@ import java.util.List;
 /**
  * @author Aleksey Romodin
  */
+@LoggerExecuteTime
 @RestController
 @RequestMapping(value = "api/libraryCard")
 @Tag(name = "LibraryCard", description = "LibraryCard API")

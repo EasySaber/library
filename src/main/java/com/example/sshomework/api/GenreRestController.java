@@ -1,5 +1,6 @@
 package com.example.sshomework.api;
 
+import com.example.sshomework.aspect.annotation.LoggerExecuteTime;
 import com.example.sshomework.dto.genre.GenreDto;
 import com.example.sshomework.dto.genre.GenreStatisticsProjection;
 import com.example.sshomework.exception.NotUniqueValueException;
@@ -23,6 +24,7 @@ import java.util.List;
 /**
  * @author Aleksey Romodin
  */
+@LoggerExecuteTime
 @RestController
 @RequestMapping(value = "api/genre")
 @Tag(name = "Genre", description = "Genre API")

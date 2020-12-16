@@ -1,5 +1,6 @@
 package com.example.sshomework.service.genre;
 
+import com.example.sshomework.aspect.annotation.LoggerCrud;
 import com.example.sshomework.dto.genre.GenreDto;
 import com.example.sshomework.dto.genre.GenreStatisticsProjection;
 import com.example.sshomework.entity.Genre;
@@ -34,6 +35,7 @@ public class GenreServiceImpl implements GenreService{
         return genreMapper.toDtoList(genreRepository.findAll());
     }
 
+    @LoggerCrud(operation = LoggerCrud.Operation.CREATE)
     @Override
     public void addNewGenre(GenreDto genreDto) throws NotUniqueValueException {
         try {
@@ -50,6 +52,7 @@ public class GenreServiceImpl implements GenreService{
         return genreRepository.getGenreStatistics();
     }
 
+    @LoggerCrud(operation = LoggerCrud.Operation.DELETE)
     @Override
     public void deleteGenre(String genreName) {
         Genre genreStored = genreRepository.findByGenreName(genreName)

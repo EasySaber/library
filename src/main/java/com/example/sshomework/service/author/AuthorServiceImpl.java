@@ -1,5 +1,6 @@
 package com.example.sshomework.service.author;
 
+import com.example.sshomework.aspect.annotation.LoggerCrud;
 import com.example.sshomework.dto.author.AuthorDto;
 import com.example.sshomework.dto.author.AuthorSearchRequest;
 import com.example.sshomework.entity.Author;
@@ -44,6 +45,7 @@ public class AuthorServiceImpl implements AuthorService {
         return authorMapper.toDtoList(authorRepository.findAll());
     }
 
+    @LoggerCrud(operation = LoggerCrud.Operation.CREATE)
     @Override
     public Optional<AuthorDto> addNewAuthor(AuthorDto authorDto){
         Author author = authorMapper.toEntity(authorDto);
@@ -62,6 +64,7 @@ public class AuthorServiceImpl implements AuthorService {
         return authorRepository.findFirstByOrderByIdDesc().map(authorMapper::toDto);
     }
 
+    @LoggerCrud(operation = LoggerCrud.Operation.DELETE)
     @Override
     public void deleteAuthorById(Long id) throws DeleteRelatedDataException {
         Author author = authorRepository.findById(id).orElseThrow(() -> new NotFoundException("Автор не найден"));

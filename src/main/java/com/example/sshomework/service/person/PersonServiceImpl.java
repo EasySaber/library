@@ -1,5 +1,6 @@
 package com.example.sshomework.service.person;
 
+import com.example.sshomework.aspect.annotation.LoggerCrud;
 import com.example.sshomework.dto.FullNameDto;
 import com.example.sshomework.dto.PersonDto;
 import com.example.sshomework.entity.Book;
@@ -45,6 +46,7 @@ public class PersonServiceImpl implements PersonService {
         return personMapper.toDtoList(personRepository.findAll());
     }
 
+    @LoggerCrud(operation = LoggerCrud.Operation.DELETE)
     @Override
     public void deletePersonsByFullName(FullNameDto fullName) {
         List<Person> persons = personRepository.findByFirstNameAndMiddleNameAndLastName(
@@ -61,12 +63,14 @@ public class PersonServiceImpl implements PersonService {
         return Optional.of(getPerson(id)).map(personMapper::toDto);
     }
 
+    @LoggerCrud(operation = LoggerCrud.Operation.CREATE)
     @Override
     public Optional<PersonDto> addNewPerson(PersonDto personDto) {
         personRepository.save(personMapper.toEntity(personDto));
         return personRepository.findFirstByOrderByIdDesc().map(personMapper::toDto);
     }
 
+    @LoggerCrud(operation = LoggerCrud.Operation.UPDATE)
     @Override
     public Optional<PersonDto> updatePerson(PersonDto personDto) {
         Person personIncoming = personMapper.toEntity(personDto);
@@ -81,16 +85,19 @@ public class PersonServiceImpl implements PersonService {
 
     }
 
+    @LoggerCrud(operation = LoggerCrud.Operation.DELETE)
     @Override
     public void deletePersonById(Long id) {
         personRepository.delete(getPerson(id));
     }
 
+    @LoggerCrud(operation = LoggerCrud.Operation.CREATE)
     @Override
     public Optional<PersonDto> addNewPostLibraryCard(Long personId, Long bookId) {
         return updateLibraryCard(personId, bookId, false);
     }
 
+    @LoggerCrud(operation = LoggerCrud.Operation.DELETE)
     @Override
     public Optional<PersonDto> deletePostLibraryCard(Long personId, Long bookId) {
         return updateLibraryCard(personId, bookId, true);

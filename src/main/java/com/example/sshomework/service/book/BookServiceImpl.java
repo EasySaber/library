@@ -1,5 +1,6 @@
 package com.example.sshomework.service.book;
 
+import com.example.sshomework.aspect.annotation.LoggerCrud;
 import com.example.sshomework.dto.FullNameDto;
 import com.example.sshomework.dto.book.BookDto;
 import com.example.sshomework.dto.book.BookSearchRequest;
@@ -55,6 +56,7 @@ public class BookServiceImpl implements BookService {
         this.bookStatusMapper = bookStatusMapper;
     }
 
+    @LoggerCrud(operation = LoggerCrud.Operation.CREATE)
     @Override
     public Optional<BookDto> addNewBook(BookDto bookDto) {
 
@@ -81,6 +83,7 @@ public class BookServiceImpl implements BookService {
         return bookRepository.findFirstByOrderByIdDesc().map(bookMapper::toDto);
     }
 
+    @LoggerCrud(operation = LoggerCrud.Operation.DELETE)
     @Override
     public void deleteBookById(Long id) throws DeleteRelatedDataException {
         Book book = bookRepository.findById(id).orElseThrow(() -> new NotFoundException("Книга не найдена."));
@@ -134,6 +137,7 @@ public class BookServiceImpl implements BookService {
         return bookMapper.toDtoList(entityManager.createQuery(cQuery).getResultList());
     }
 
+    @LoggerCrud(operation = LoggerCrud.Operation.UPDATE)
     @Override
     public Optional<BookDto> updateGenres(Long id, List<String> genres){
         if (!genres.isEmpty()) {

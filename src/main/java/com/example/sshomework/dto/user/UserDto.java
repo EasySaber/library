@@ -17,6 +17,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @NoArgsConstructor
 @EqualsAndHashCode
+@ToString
 public class UserDto {
 
     @JsonView(View.All.class)
@@ -27,6 +28,7 @@ public class UserDto {
     @JsonView(View.Public.class)
     private String username;
 
+    @ToString.Exclude
     @NotBlank(message = "Пустое значение")
     @Size(min = 6, max = 64, message = "Пароль должен содержать от 6 до 64 символов")
     @JsonView(View.Public.class)
