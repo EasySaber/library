@@ -1,0 +1,8 @@
+{
+  "properties": [
+    {
+      "name": "main-module.url",
+      "type": "java.lang.String",
+      "description": "URL for main-module"
+  }
+] }
