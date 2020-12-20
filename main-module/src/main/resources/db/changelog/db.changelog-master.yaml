@@ -22,3 +22,6 @@ databaseChangeLog:
   # Добавление новых столбцов в таблицу "Аккаунт" для блокировки входа
   - include:
       file: db/changelog/changes/v_0.0.10.yaml
+  # Создание таблиц History: Автор, Книга, Жанр, Пользователь
+  - include:
+      file: db/changelog/changes/v_0.1.0.yaml

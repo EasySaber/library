@@ -94,9 +94,9 @@ public class PersonRestController {
     })
     @DeleteMapping("/deleteByFullName")
     public void deletePersonByFullName(
-            @Parameter(description = "ФИО") FullNameDto firstName)
+            @Parameter(description = "ФИО") @RequestBody FullNameDto fullName)
     {
-       personService.deletePersonsByFullName(firstName);
+       personService.deletePersonsByFullName(fullName);
     }
 
     @PreAuthorize("hasRole('ADMIN')")

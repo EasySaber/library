@@ -1,16 +1,21 @@
 package com.example.sshomework.aspect;
 
 import com.example.sshomework.aspect.annotation.LoggerCrud;
+import com.example.sshomework.entity.Book;
+import com.example.sshomework.entity.Genre;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.JoinPoint;
+import org.aspectj.lang.annotation.After;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
+import org.aspectj.lang.annotation.Pointcut;
 import org.aspectj.lang.reflect.MethodSignature;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 
+import javax.persistence.Entity;
 import java.util.Arrays;
 
 /**
@@ -35,5 +40,4 @@ public class CrudMethodAspect {
                 loggerCrud.operation(),
                 Arrays.toString(joinPoint.getArgs())));
     }
-
 }
