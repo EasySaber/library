@@ -1,0 +1,69 @@
+databaseChangeLog:
+  - changeSet:
+      id: 20-12-2020-006
+      author: Aleksey Romodin
+      comment: Add columns in GenreHistory
+      changes:
+        - addColumn:
+            tableName: history_genre
+            columns:
+            - column:
+                name: before
+                type: JSON
+            - column:
+                name: after
+                type: JSON
+            - column:
+                name: difference
+                type: JSON
+  - changeSet:
+        id: 20-12-2020-007
+        author: Aleksey Romodin
+        comment: Add columns in AuthorHistory
+        changes:
+            - addColumn:
+                  tableName: history_author
+                  columns:
+                      - column:
+                            name: before
+                            type: JSON
+                      - column:
+                            name: after
+                            type: JSON
+                      - column:
+                            name: difference
+                            type: JSON
+  - changeSet:
+        id: 20-12-2020-008
+        author: Aleksey Romodin
+        comment: Add columns in PersonHistory
+        changes:
+            - addColumn:
+                  tableName: history_person
+                  columns:
+                      - column:
+                            name: before
+                            type: JSON
+                      - column:
+                            name: after
+                            type: JSON
+                      - column:
+                            name: difference
+                            type: JSON
+  - changeSet:
+        id: 20-12-2020-009
+        author: Aleksey Romodin
+        comment: Add columns in BookHistory
+        changes:
+            - addColumn:
+                  tableName: history_book
+                  columns:
+                      - column:
+                            name: before
+                            type: JSON
+                      - column:
+                            name: after
+                            type: JSON
+                      - column:
+                            name: difference
+                            type: JSON

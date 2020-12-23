@@ -1,4 +1,4 @@
-package com.example.sshomework.service.history;
+package com.example.sshomework.entity.history;
 
 /**
  * @author Aleksey Romodin

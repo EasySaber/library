@@ -29,5 +29,29 @@
       "type": "java.lang.Boolean",
       "description": "Логирование задержки между получением Request и Response",
       "defaultValue": true
+    },
+    {
+      "name": "aspect.personHistory",
+      "type": "java.lang.Boolean",
+      "description": "История операций над сущностью",
+      "defaultValue": true
+    },
+    {
+      "name": "aspect.genreHistory",
+      "type": "java.lang.Boolean",
+      "description": "История операций над сущностью",
+      "defaultValue": true
+    },
+    {
+      "name": "aspect.bookHistory",
+      "type": "java.lang.Boolean",
+      "description": "История операций над сущностью",
+      "defaultValue": true
+    },
+    {
+      "name": "aspect.authorHistory",
+      "type": "java.lang.Boolean",
+      "description": "История операций над сущностью",
+      "defaultValue": true
     }
   ] }

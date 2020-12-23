@@ -4,6 +4,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.time.ZonedDateTime;
+import java.util.Map;
 
 /**
  * @author Aleksey Romodin
@@ -17,4 +18,7 @@ public class HistoryDto {
     private String operation;
     private Long entityId;
     private String entityName;
+    private Map<String, Object> before;
+    private Map<String, Object> after;
+    private Map<String, Object> difference;
 }

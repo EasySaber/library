@@ -25,3 +25,6 @@ databaseChangeLog:
   # Создание таблиц History: Автор, Книга, Жанр, Пользователь
   - include:
       file: db/changelog/changes/v_0.1.0.yaml
+  # Добавление столбцов Before/After/Difference в таблицы History_***
+  - include:
+      file: db/changelog/changes/v_0.1.1.yaml

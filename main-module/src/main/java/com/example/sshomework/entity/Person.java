@@ -26,7 +26,7 @@ import java.util.Set;
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper = false)
 @Table(name = "person")
-public class Person extends MainEntity{
+public class Person extends MainEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

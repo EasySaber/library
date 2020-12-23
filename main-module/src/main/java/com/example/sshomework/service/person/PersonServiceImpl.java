@@ -126,8 +126,6 @@ public class PersonServiceImpl implements PersonService {
                 newCard.setPerson(person);
                 libraryCards.add(newCard);
             }
-            person.getBooks().clear();
-            person.setBooks(libraryCards);
             personRepository.save(person);
             return Optional.of(person).map(personMapper::toDto);
     }
