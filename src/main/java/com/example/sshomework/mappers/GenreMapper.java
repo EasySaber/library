@@ -9,5 +9,4 @@ import org.mapstruct.Mapper;
  */
 @Mapper
 public interface GenreMapper extends MapMapper<GenreDto, Genre>{
-
 }

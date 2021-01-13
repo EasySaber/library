@@ -1,132 +1,163 @@
 package com.example.sshomework.service.book;
 
-import com.example.sshomework.dto.BookDto;
+import com.example.sshomework.dto.FullNameDto;
+import com.example.sshomework.dto.book.BookDto;
+import com.example.sshomework.dto.book.BookSearchRequest;
+import com.example.sshomework.dto.book.BookStatusDto;
 import com.example.sshomework.entity.Author;
 import com.example.sshomework.entity.Book;
 import com.example.sshomework.entity.Genre;
-import com.example.sshomework.mappers.BookMapper;
-import com.example.sshomework.repository.AuthorRepository;
-import com.example.sshomework.repository.BookRepository;
+import com.example.sshomework.exception.DeleteRelatedDataException;
+import com.example.sshomework.mappers.Book.BookMapper;
+import com.example.sshomework.mappers.Book.BookStatusMapper;
 import com.example.sshomework.repository.GenreRepository;
-import com.example.sshomework.specification.BookSpecification;
-import lombok.RequiredArgsConstructor;
-import org.springframework.data.jpa.domain.Specification;
+import com.example.sshomework.repository.author.AuthorRepository;
+import com.example.sshomework.repository.book.BookRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.webjars.NotFoundException;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
  * @author Aleksey Romodin
  */
 @Service
-@RequiredArgsConstructor
 public class BookServiceImpl implements BookService {
 
     private final BookRepository bookRepository;
-    private final BookMapper bookMapper;
     private final GenreRepository genreRepository;
     private final AuthorRepository authorRepository;
+    private final BookMapper bookMapper;
+    private final BookStatusMapper bookStatusMapper;
+
+    @PersistenceContext
+    EntityManager entityManager;
+
+    @Autowired
+    public BookServiceImpl(BookRepository bookRepository,
+                           GenreRepository genreRepository,
+                           AuthorRepository authorRepository,
+                           BookMapper bookMapper,
+                           BookStatusMapper bookStatusMapper)
+    {
+        this.bookRepository = bookRepository;
+        this.genreRepository = genreRepository;
+        this.authorRepository = authorRepository;
+        this.bookMapper = bookMapper;
+        this.bookStatusMapper = bookStatusMapper;
+    }
 
     @Override
-    public BookDto addNewBook(BookDto bookDto) {
+    public Optional<BookDto> addNewBook(BookDto bookDto) {
 
         Book book = bookMapper.toEntity(bookDto);
-        Author author = authorRepository.findById(book.getAuthorBook().getId()).orElse(null);
-        if (author != null) {
-            book.setAuthorBook(author);
-            if (book.getGenres().isEmpty()) {
-                return null;
+        Author author = authorRepository.findById(book.getAuthorBook().getId())
+                .orElseThrow(() -> new NotFoundException("Автор не найден"));
+
+        book.setAuthorBook(author);
+        if (book.getGenres().isEmpty()) {
+            throw new NotFoundException("Жанры не найдены.");
+        } else {
+            Set<Genre> addGenres = new HashSet<>();
+            book.getGenres().forEach(genre ->
+                    genreRepository.findById(genre.getId()).ifPresent(addGenres::add));
+            if (!addGenres.isEmpty()) {
+                addGenres.forEach(genre -> genre.getBooks().add(book));
+                book.getGenres().clear();
+                book.setGenres(addGenres);
+
             } else {
-                Set<Genre> addGenres = new HashSet<>();
-                book.getGenres().forEach(genre ->
-                        genreRepository.findById(genre.getId()).ifPresent(addGenres::add));
-
-                if (!addGenres.isEmpty()) {
-                    addGenres.forEach(genre -> genre.getBooks().add(book));
-                    book.getGenres().clear();
-                    book.setGenres(addGenres);
-
-                } else {
-                    return null;
-                }
+                throw new NotFoundException("Жанры не найдены.");
             }
-            bookRepository.save(book);
-            return bookMapper.toDto(bookRepository.findFirstByOrderByIdDesc());
         }
-        return null;
+        bookRepository.save(book);
+        return bookRepository.findFirstByOrderByIdDesc().map(bookMapper::toDto);
     }
 
     @Override
-    public Boolean deleteBookById(Long id) {
-        Optional<Book> book = bookRepository.findById(id);
-        if (book.isPresent()) {
-            if (book.get().getPersons().isEmpty()) {
-                bookRepository.deleteById(id);
-                return true;
-            }
+    public void deleteBookById(Long id) throws DeleteRelatedDataException {
+        Book book = bookRepository.findById(id).orElseThrow(() -> new NotFoundException("Книга не найдена."));
+        if (!book.getPersons().isEmpty()) {
+            throw new DeleteRelatedDataException("Невозможно удалить книгу. Находиться в пользовании.");
         }
-        return false;
+        bookRepository.deleteById(id);
     }
 
     @Override
-    public List<BookDto> getByGenre(Long id) {
-        return bookMapper.toDtoList(bookRepository.findAll().stream()
-                .filter(book -> book.getGenres().stream().anyMatch(genre -> genre.getId().equals(id)))
+    public List<BookDto> getByGenre(String genreName) {
+        genreRepository.findByGenreName(genreName)
+                .orElseThrow(() -> new NotFoundException("Жанр не найден."));
+        return bookMapper.toDtoList(bookRepository.findAll()
+                .stream().filter(book ->
+                        book.getGenres().stream().anyMatch(genre ->
+                                genre.getGenreName().equals(genreName)))
                 .collect(Collectors.toList()));
     }
 
     @Override
-    public List<BookDto> getByAuthorFilter(String firstName, String middleName, String lastName) {
+    public List<BookDto> getByAuthorFilter(FullNameDto request) {
 
-        Specification<Book> specification = null;
+        List<Predicate> predicates = new ArrayList<>();
+
+        CriteriaBuilder cBuilder = entityManager.getCriteriaBuilder();
+        CriteriaQuery<Book> cQuery = cBuilder.createQuery(Book.class);
+        Root<Book> book = cQuery.from(Book.class);
+
+        String firstName = request.getFirstName();
+        String middleName = request.getMiddleName();
+        String lastName = request.getLastName();
 
         // Формируем условия для запроса
         if (firstName != null) {
-            specification = draftSpecification(null, "firstName", firstName);
+            predicates.add(cBuilder.equal(book.get("authorBook").get("firstName"), firstName));
         }
         if (middleName != null) {
-            specification = draftSpecification(specification, "middleName", middleName);
+            predicates.add(cBuilder.equal(book.get("authorBook").get("middleName"), middleName));
         }
         if (lastName != null) {
-            specification = draftSpecification(specification, "lastName", lastName);
+            predicates.add(cBuilder.equal(book.get("authorBook").get("lastName"), lastName));
         }
-        return bookMapper.toDtoList(bookRepository.findAll(specification));
-    }
 
-    private Specification<Book> draftSpecification(
-            Specification<Book> specification, String columnName, String optionalName)
-    {
-        if (optionalName != null) {
-            if (specification == null) {
-                specification = Specification.where(new BookSpecification(columnName, optionalName));
-            } else {
-                specification = specification.and(new BookSpecification(columnName, optionalName));
-            }
+        if (!predicates.isEmpty()) {
+            cQuery.where(predicates.toArray(new Predicate[0]));
         }
-        return specification;
+
+        return bookMapper.toDtoList(entityManager.createQuery(cQuery).getResultList());
     }
 
     @Override
-    public BookDto updateGenres(Long id, List<Long> genres){
+    public Optional<BookDto> updateGenres(Long id, List<String> genres){
+        if (!genres.isEmpty()) {
+            Book book = bookRepository.findById(id)
+                    .orElseThrow(() -> new NotFoundException("Книга не найдена."));
 
-        Optional<Book> book = bookRepository.findById(id);
-        if (book.isPresent() & !genres.isEmpty()) {
             Set<Genre> genreSet = new HashSet<>();
-            for (Long genreId : genres) {
-                Optional<Genre> genre = genreRepository.findById(genreId);
-                genre.ifPresent(genreSet::add);
-            }
+            genres.forEach(genre -> genreRepository.findByGenreName(genre).map(genreSet::add));
             if (genreSet.size() > 0) {
-                book.get().getGenres().clear();
-                book.get().setGenres(genreSet);
-                bookRepository.save(book.get());
-                return bookMapper.toDto(book.get());
+                book.getGenres().clear();
+                book.setGenres(genreSet);
+                bookRepository.save(book);
+                return Optional.of(book).map(bookMapper::toDto);
             }
         }
-        return null;
+        throw new NotFoundException("Жанры не найдены.");
+    }
+
+    @Override
+    public List<BookDto> getBookInParameters(BookSearchRequest request) {
+        return bookMapper.toDtoList(bookRepository.customFilter(request));
+    }
+
+    @Override
+    public List<BookStatusDto> getBooks() {
+        return bookStatusMapper.toDtoList(bookRepository.findAll());
     }
 }
