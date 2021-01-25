@@ -3,10 +3,7 @@ package com.example.sshomework.dto.author;
 import com.example.sshomework.dto.book.BookDto;
 import com.example.sshomework.dto.view.View;
 import com.fasterxml.jackson.annotation.JsonView;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
@@ -21,6 +18,7 @@ import java.util.Set;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
+@EqualsAndHashCode
 public class AuthorDto {
 
     @JsonView({View.Public.class, View.Private.class, View.AuthorOfAllTheBook.class,
@@ -44,6 +42,8 @@ public class AuthorDto {
             View.AuthorOfAllTheBook.class, View.PersonOfAllTheBook.class, View.BookPost.class})
     private String lastName;
 
+    @EqualsAndHashCode.Exclude
+    @ToString.Exclude
     @JsonView({View.Public.class, View.AddAuthor.class})
     private Set<BookDto> books;
 

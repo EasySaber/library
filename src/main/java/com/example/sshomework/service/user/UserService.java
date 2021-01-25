@@ -1,5 +1,6 @@
 package com.example.sshomework.service.user;
 
+import com.example.sshomework.config.AuthenticationTracker;
 import com.example.sshomework.dto.user.UserDto;
 import com.example.sshomework.entity.User;
 import com.example.sshomework.exception.NotUniqueValueException;
@@ -10,7 +11,7 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.Pbkdf2PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.sql.SQLException;
@@ -24,16 +25,19 @@ public class UserService implements UserDetailsService{
 
     private final UserRepository userRepository;
     private final UserMapper userMapper;
-    private final BCryptPasswordEncoder bCryptPasswordEncoder;
+    private final Pbkdf2PasswordEncoder passwordEncoder;
+    private final AuthenticationTracker trackerConfig;
 
     @Autowired
     public UserService(UserRepository userRepository,
                        UserMapper userMapper,
-                       BCryptPasswordEncoder bCryptPasswordEncoder)
+                       Pbkdf2PasswordEncoder passwordEncoder,
+                       AuthenticationTracker trackerConfig)
     {
         this.userRepository = userRepository;
         this.userMapper = userMapper;
-        this.bCryptPasswordEncoder = bCryptPasswordEncoder;
+        this.passwordEncoder = passwordEncoder;
+        this.trackerConfig = trackerConfig;
     }
 
     public List<UserDto> getAll() {
@@ -42,7 +46,7 @@ public class UserService implements UserDetailsService{
 
     public void addNewUser(UserDto user) throws NotUniqueValueException {
             User userInput = userMapper.toEntity(user);
-            String pass = bCryptPasswordEncoder.encode(userInput.getPassword());
+            String pass = passwordEncoder.encode(userInput.getPassword());
             userInput.setPassword(pass);
             try{
                 userRepository.save(userInput);
@@ -58,10 +62,13 @@ public class UserService implements UserDetailsService{
         User user = userRepository.findByUsername(username)
                 .orElseThrow(()-> new UsernameNotFoundException("Пользователь не найден"));
 
+        boolean locked = trackerConfig.getStatusLockedAccount(user);
+
         return org.springframework.security.core.userdetails.User.builder()
                 .username(user.getUsername())
                 .password(user.getPassword())
                 .roles(user.getRole().toString())
+                .accountLocked(locked)
                 .build();
     }
 }

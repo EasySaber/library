@@ -1,9 +1,6 @@
 package com.example.sshomework.entity;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -27,6 +24,7 @@ import java.util.Set;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
+@EqualsAndHashCode(callSuper = false)
 @Table(name = "person")
 public class Person extends MainEntity{
 
@@ -46,6 +44,7 @@ public class Person extends MainEntity{
     @Column(name = "date_of_birth")
     private LocalDate dateOfBirth;
 
+    @EqualsAndHashCode.Exclude
     @OneToMany(mappedBy = "person", fetch = FetchType.EAGER, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     private Set<LibraryCard> books;
 

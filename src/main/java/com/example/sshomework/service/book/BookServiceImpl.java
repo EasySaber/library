@@ -62,22 +62,21 @@ public class BookServiceImpl implements BookService {
         Author author = authorRepository.findById(book.getAuthorBook().getId())
                 .orElseThrow(() -> new NotFoundException("Автор не найден"));
 
-        book.setAuthorBook(author);
-        if (book.getGenres().isEmpty()) {
-            throw new NotFoundException("Жанры не найдены.");
-        } else {
-            Set<Genre> addGenres = new HashSet<>();
-            book.getGenres().forEach(genre ->
-                    genreRepository.findById(genre.getId()).ifPresent(addGenres::add));
-            if (!addGenres.isEmpty()) {
-                addGenres.forEach(genre -> genre.getBooks().add(book));
-                book.getGenres().clear();
-                book.setGenres(addGenres);
+        Set<Genre> genres = Optional.ofNullable(book.getGenres())
+                .orElseThrow(() -> new NotFoundException("Необходимо выбрать жанры."));
 
-            } else {
-                throw new NotFoundException("Жанры не найдены.");
-            }
+        book.setAuthorBook(author);
+
+        Set<Genre> addGenres = new HashSet<>();
+        genres.forEach(genre -> genreRepository.findByGenreName(genre.getGenreName()).ifPresent(addGenres::add));
+        if (!addGenres.isEmpty()) {
+            addGenres.forEach(genre -> genre.getBooks().add(book));
+            book.getGenres().clear();
+            book.setGenres(addGenres);
+        } else {
+            throw new NotFoundException("Жанры не найдены.");
         }
+
         bookRepository.save(book);
         return bookRepository.findFirstByOrderByIdDesc().map(bookMapper::toDto);
     }
@@ -85,20 +84,22 @@ public class BookServiceImpl implements BookService {
     @Override
     public void deleteBookById(Long id) throws DeleteRelatedDataException {
         Book book = bookRepository.findById(id).orElseThrow(() -> new NotFoundException("Книга не найдена."));
-        if (!book.getPersons().isEmpty()) {
-            throw new DeleteRelatedDataException("Невозможно удалить книгу. Находиться в пользовании.");
-        }
-        bookRepository.deleteById(id);
+        Optional.ofNullable(book.getPersons()).ifPresent(person -> {
+            if (!person.isEmpty()) {
+                throw new DeleteRelatedDataException("Невозможно удалить книгу, находится в пользовании.");
+            }
+        });
+        bookRepository.delete(book);
     }
 
     @Override
     public List<BookDto> getByGenre(String genreName) {
-        genreRepository.findByGenreName(genreName)
+        Genre genre = genreRepository.findByGenreName(genreName)
                 .orElseThrow(() -> new NotFoundException("Жанр не найден."));
-        return bookMapper.toDtoList(bookRepository.findAll()
-                .stream().filter(book ->
-                        book.getGenres().stream().anyMatch(genre ->
-                                genre.getGenreName().equals(genreName)))
+        return bookMapper.toDtoList(
+                bookRepository.findAll().stream()
+                        .filter(book -> Optional.ofNullable(book.getGenres()).isPresent())
+                .filter(book -> book.getGenres().stream().anyMatch(g -> g.equals(genre)))
                 .collect(Collectors.toList()));
     }
 

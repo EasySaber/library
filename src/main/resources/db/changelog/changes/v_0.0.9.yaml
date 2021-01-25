@@ -1,0 +1,13 @@
+databaseChangeLog:
+  - changeSet:
+      id: 10-12-2020-001
+      author: Aleksey Romodin
+      comment: Update password for user
+      changes:
+        - sqlFile:
+            dbms: 'postgresql'
+            encoding: UTF-8
+            path: db/changelog/default-values/update_v_0.0.3.sql
+            relativeToChangelogFile: false
+            splitStatements: true
+            stripComments: true

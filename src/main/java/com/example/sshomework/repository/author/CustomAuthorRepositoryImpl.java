@@ -2,6 +2,7 @@ package com.example.sshomework.repository.author;
 
 import com.example.sshomework.dto.author.AuthorSearchRequest;
 import com.example.sshomework.entity.Author;
+import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -16,6 +17,7 @@ import java.util.List;
 /**
  * @author Aleksey Romodin
  */
+@Service
 public class CustomAuthorRepositoryImpl implements CustomAuthorRepository {
 
     @PersistenceContext
@@ -34,7 +36,7 @@ public class CustomAuthorRepositoryImpl implements CustomAuthorRepository {
         String middleName = request.getMiddleName();
         String lastName = request.getLastName();
         LocalDate starDateCreated = request.getStarDateCreated();
-        LocalDate endDateCreated = request.getStarDateCreated();
+        LocalDate endDateCreated = request.getEndDateCreated();
 
         if (firstName != null) {
             predicates.add(cBuilder.equal(
@@ -48,12 +50,12 @@ public class CustomAuthorRepositoryImpl implements CustomAuthorRepository {
             predicates.add(cBuilder.equal(
                     cBuilder.lower(author.get("lastName")), lastName.toLowerCase()));
         }
-        if ((starDateCreated != null) & (endDateCreated !=null)) {
+        if ((starDateCreated != null) && (endDateCreated !=null)) {
             predicates.add(cBuilder.between(
                     cBuilder.function("date", LocalDate.class, author.get("dateTimeCreated")),
                     starDateCreated, endDateCreated));
         } else {
-            if (request.getStarDateCreated() != null) {
+            if (starDateCreated != null) {
                 predicates.add(cBuilder.greaterThanOrEqualTo(
                         cBuilder.function("date", LocalDate.class, author.get("dateTimeCreated")),
                         starDateCreated));

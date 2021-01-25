@@ -3,7 +3,7 @@ package com.example.sshomework.controller;
 import com.example.sshomework.dto.user.UserDto;
 import com.example.sshomework.exception.NotUniqueValueException;
 import com.example.sshomework.service.user.UserService;
-import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -20,10 +20,14 @@ import java.util.List;
  */
 @Controller
 @RequestMapping(value = "/admin")
-@RequiredArgsConstructor
 public class AdminController {
 
     private final UserService userService;
+
+    @Autowired
+    public AdminController(UserService userService) {
+        this.userService = userService;
+    }
 
     @GetMapping(value = "")
     public String getUsers(Model model) {

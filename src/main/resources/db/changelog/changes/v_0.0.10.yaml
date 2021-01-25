@@ -1,0 +1,17 @@
+databaseChangeLog:
+  - changeSet:
+      id: 13-12-2020-001
+      author: Aleksey Romodin
+      comment: Add columns in customer table
+      changes:
+        - addColumn:
+            tableName: customer
+            columns:
+            - column:
+                name: date_time_input
+                type: TIMESTAMP
+                defaultValueDate: now()
+            - column:
+                name: login_attempt_input
+                type: SMALLINT
+                defaultValue: 0

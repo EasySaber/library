@@ -1,23 +1,8 @@
 package com.example.sshomework.entity;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
+import javax.persistence.*;
 import java.time.LocalDate;
 import java.util.Set;
 
@@ -29,6 +14,7 @@ import java.util.Set;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
+@EqualsAndHashCode(callSuper = false)
 @Table(name = "book")
 public class Book extends MainEntity{
 
@@ -46,12 +32,14 @@ public class Book extends MainEntity{
     @JoinColumn(name = "author_id")
     private Author authorBook;
 
+    @EqualsAndHashCode.Exclude
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "book_genre",
             joinColumns = @JoinColumn(name = "book_id"),
             inverseJoinColumns = @JoinColumn(name = "genre_id"))
     private Set<Genre> genres;
 
+    @EqualsAndHashCode.Exclude
     @OneToMany(mappedBy = "book", fetch = FetchType.EAGER, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     private Set<LibraryCard> persons;
 }

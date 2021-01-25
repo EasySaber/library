@@ -2,14 +2,12 @@ package com.example.sshomework.dto.user;
 
 import com.example.sshomework.dto.view.View;
 import com.fasterxml.jackson.annotation.JsonView;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+import java.time.LocalDateTime;
 
 /**
  * @author Aleksey Romodin
@@ -18,6 +16,7 @@ import javax.validation.constraints.Size;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
+@EqualsAndHashCode
 public class UserDto {
 
     @JsonView(View.All.class)
@@ -36,4 +35,10 @@ public class UserDto {
     @NotNull(message = "Пустое значение")
     @JsonView(View.Public.class)
     private RolesUser role;
+
+    @EqualsAndHashCode.Exclude
+    private LocalDateTime dateTimeInput = LocalDateTime.now();
+
+    @EqualsAndHashCode.Exclude
+    private Integer loginAttemptInput = 0;
 }

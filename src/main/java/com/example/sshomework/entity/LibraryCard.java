@@ -1,19 +1,10 @@
 package com.example.sshomework.entity;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
+import javax.persistence.*;
+import java.time.Period;
 import java.time.ZonedDateTime;
-import java.time.temporal.ChronoUnit;
 
 /**
  * @author Aleksey Romodin
@@ -23,6 +14,7 @@ import java.time.temporal.ChronoUnit;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
+@EqualsAndHashCode(callSuper = false)
 @Table(name = "library_card")
 public class LibraryCard extends MainEntity{
 
@@ -38,10 +30,12 @@ public class LibraryCard extends MainEntity{
     @JoinColumn(name = "person_id")
     private Person person;
 
+    @EqualsAndHashCode.Exclude
     private ZonedDateTime dateTimeReturn = ZonedDateTime.now().plusDays(7);
 
     public Long daysDept() {
-        long daysDept = ChronoUnit.DAYS.between(dateTimeReturn, ZonedDateTime.now());
+        long daysDept = Period.between(dateTimeReturn.toLocalDate(),
+                ZonedDateTime.now().toLocalDate()).getDays();
         return daysDept < 0 ? 0 : daysDept;
     }
 }

@@ -5,10 +5,7 @@ import com.example.sshomework.dto.LibraryCardDto;
 import com.example.sshomework.dto.genre.GenreDto;
 import com.example.sshomework.dto.view.View;
 import com.fasterxml.jackson.annotation.JsonView;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.validation.Valid;
@@ -24,6 +21,8 @@ import java.util.Set;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
+@EqualsAndHashCode
+@ToString
 public class BookDto {
 
     @JsonView({View.All.class, View.PersonOfAllTheBookSmall.class, View.BookPost.class,
@@ -45,10 +44,14 @@ public class BookDto {
     private AuthorDto authorBookDto;
 
     @Valid
+    @EqualsAndHashCode.Exclude
+    @ToString.Exclude
     @JsonView({View.Public.class, View.AddAuthor.class, View.PersonOfAllTheBook.class,
             View.Book.class, View.UpdateBookGenres.class})
     private Set<GenreDto> genres;
 
+    @EqualsAndHashCode.Exclude
+    @ToString.Exclude
     @JsonView(View.All.class)
     private Set<LibraryCardDto> personsDto;
 }
