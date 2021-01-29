@@ -1,0 +1,121 @@
+databaseChangeLog:
+  - changeSet:
+      id: 20-12-2020-001
+      author: Aleksey Romodin
+      comment: Create history table for Genre
+      changes:
+        - createTable:
+            tableName: history_genre
+            columns:
+            - column:
+                name: id
+                type: BIGINT
+                autoIncrement: true
+                constraints:
+                  primaryKey: true
+                  nullable: false
+            - column:
+                name: date_time
+                type: TIMESTAMPTZ
+            - column:
+                name: user_name
+                type: VARCHAR(64)
+            - column:
+                name: operation
+                type: VARCHAR(64)
+            - column:
+                name: entity_id
+                type: BIGINT
+            - column:
+                name: entity_name
+                type: VARCHAR(200)
+  - changeSet:
+        id: 20-12-2020-002
+        author: Aleksey Romodin
+        comment: Create history table for Author
+        changes:
+            - createTable:
+                  tableName: history_author
+                  columns:
+                      - column:
+                            name: id
+                            type: BIGINT
+                            autoIncrement: true
+                            constraints:
+                                primaryKey: true
+                                nullable: false
+                      - column:
+                            name: date_time
+                            type: TIMESTAMPTZ
+                      - column:
+                            name: user_name
+                            type: VARCHAR(64)
+                      - column:
+                            name: operation
+                            type: VARCHAR(64)
+                      - column:
+                            name: entity_id
+                            type: BIGINT
+                      - column:
+                            name: entity_name
+                            type: VARCHAR(200)
+  - changeSet:
+        id: 20-12-2020-003
+        author: Aleksey Romodin
+        comment: Create history table for Book
+        changes:
+            - createTable:
+                  tableName: history_book
+                  columns:
+                      - column:
+                            name: id
+                            type: BIGINT
+                            autoIncrement: true
+                            constraints:
+                                primaryKey: true
+                                nullable: false
+                      - column:
+                            name: date_time
+                            type: TIMESTAMPTZ
+                      - column:
+                            name: user_name
+                            type: VARCHAR(64)
+                      - column:
+                            name: operation
+                            type: VARCHAR(64)
+                      - column:
+                            name: entity_id
+                            type: BIGINT
+                      - column:
+                            name: entity_name
+                            type: VARCHAR(200)
+  - changeSet:
+        id: 20-12-2020-004
+        author: Aleksey Romodin
+        comment: Create history table for Person
+        changes:
+            - createTable:
+                  tableName: history_person
+                  columns:
+                      - column:
+                            name: id
+                            type: BIGINT
+                            autoIncrement: true
+                            constraints:
+                                primaryKey: true
+                                nullable: false
+                      - column:
+                            name: date_time
+                            type: TIMESTAMPTZ
+                      - column:
+                            name: user_name
+                            type: VARCHAR(64)
+                      - column:
+                            name: operation
+                            type: VARCHAR(64)
+                      - column:
+                            name: entity_id
+                            type: BIGINT
+                      - column:
+                            name: entity_name
+                            type: VARCHAR(200)

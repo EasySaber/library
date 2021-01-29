@@ -1,0 +1,57 @@
+{
+  "properties": [
+    {
+      "name": "aspect.global",
+      "type": "java.lang.Boolean",
+      "description": "Глобальное отключение аспектов",
+      "defaultValue": true
+    },
+    {
+      "name": "aspect.loggerCrudMethod",
+      "type": "java.lang.Boolean",
+      "description": "Логирование CRUD методов",
+      "defaultValue": true
+    },
+    {
+      "name": "aspect.loggerNoArgsMethod",
+      "type": "java.lang.Boolean",
+      "description": "Логирование методов без аргументов",
+      "defaultValue": true
+    },
+    {
+      "name": "aspect.loggerExceptionCatch",
+      "type": "java.lang.Boolean",
+      "description": "Логирование возникающих исключений",
+      "defaultValue": true
+    },
+    {
+      "name": "aspect.loggerExecuteTimeMethod",
+      "type": "java.lang.Boolean",
+      "description": "Логирование задержки между получением Request и Response",
+      "defaultValue": true
+    },
+    {
+      "name": "aspect.personHistory",
+      "type": "java.lang.Boolean",
+      "description": "История операций над сущностью",
+      "defaultValue": true
+    },
+    {
+      "name": "aspect.genreHistory",
+      "type": "java.lang.Boolean",
+      "description": "История операций над сущностью",
+      "defaultValue": true
+    },
+    {
+      "name": "aspect.bookHistory",
+      "type": "java.lang.Boolean",
+      "description": "История операций над сущностью",
+      "defaultValue": true
+    },
+    {
+      "name": "aspect.authorHistory",
+      "type": "java.lang.Boolean",
+      "description": "История операций над сущностью",
+      "defaultValue": true
+    }
+  ] }
